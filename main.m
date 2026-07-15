@@ -3,8 +3,12 @@
 % This is the main file of a mouse cardiomyocite model.
 % It should be in a directory with other directories such as +odes, +plotting and
 % +rates. This allows it to call scripts/function from those files
+% Refer to the original paper for details on parameters. I tried to stay as consistent
+% with the notation as possible, expect when it was too verbose.
 % Philippe Aumont
-% Model from Bondarenko, V.E. 2014.
+% Bondarenko VE (2014) A Compartmentalized Mathematical Model of the
+% B1-Adrenergic Signaling System in Mouse Ventricular Myocytes. PLoS
+% ONE 9(2): e89113. https://doi.org/10.1371/journal.pone.0089113
 
 
 %Parameters
@@ -67,71 +71,171 @@ p.G_Kur = 0.160;    %Apex = 0.160 | Septum = 0.0975
 p.G_Kss = 0.050;    %Apex = 0.050 | Septum = 0.0324
 p.G_Kr = 0.078;     %mS/uF
 
-% %Temporary Parameters
-p.I_stim = 0;
-
 %Initial Markov State conditions
-S_LCC_0 = [
-0.930308e-18,   %O
-0.999876,       %C1
-0.124216e-3,    %C2
-0.578679e-8,    %C3
-0.119816e-12,   %C4
-0.497923e-18,   %I1
-0.345847e-13,   %I2
-0.185106e-13    %I3
+S_LCC_cav_0 = [
+0.320206e-11,   %O
+0.973685,       %C1
+0.524483e-2,    %C2
+0.105944e-4,    %C3
+0.951124e-8,    %C4
+0.320207e-11,   %Cp
+0.308577e-11,   %I1
+0.217536e-7,    %I2
+0.209641e-7     %I3
+0.562222e-10,   %O-p
+0.206347e-1,    %C1-p
+0.421668e-3,    %C2-p
+0.323128e-5,    %C3-p
+0.110051e-7,    %C4-p
+0.140555e-10,   %Cp-p
+0.541817e-10,   %I1-p
+0.100783e-6,    %I2-p
+0.970287e-7     %I3-p
+];
+
+S_LCC_ecav_0 = [
+0.286851e-11,   %O
+0.872261,       %C1
+0.469850e-2,    %C2
+0.949082e-5,    %C3
+0.852050e-8,    %C4
+0.286852e-11,   %Cp
+0.276420e-11,   %I1
+0.194870e-7,    %I2
+0.187798e-7     %I3
+0.328449e-9,    %O-p
+0.120548,       %C1-p
+0.246338e-2,    %C2-p
+0.188771e-4,    %C3-p
+0.642918e-7,    %C4-p
+0.821123e-10,   %Cp-p
+0.316528e-9,    %I1-p
+0.588189e-6,    %I2-p
+0.566840e-6     %I3-p
 ];
 
 S_RyR_0 = [
-0.149102e-4,    %O1
-0.951726e-10,   %O2
-0.999817,       %C1
-0.167740e-3     %C2
+0.854737e-5,    %O1
+0.360412e-10,   %O2
+0.996216,       %C1
+0.961561e-4,    %C2
+0.526065e-7,    %O1-p
+0.369705e-12,   %O2-p
+0.367832e-2,    %C1-p
+0.986431e-6     %C2-p
 ];
 
 S_Na_0 = [
-0.713483e-6,    %O
-0.279132e-3,    %C1
-0.020752,       %C2
-0.624646,       %C3
-0.153176e-3,    %IF
-0.673345e-6,    %I1
-0.155787e-8,    %I2
-0.0113879,      %IC2
-0.342780        %IC3
+0.367777e-6,    %O
+0.161178e-3,    %C1
+0.132248e-1,    %C2
+0.436222,       %C3
+0.153271e-3,    %IF
+0.146044e-4,    %I1
+0.545874e-7,    %I2
+0.125760e-1,    %IC2
+0.414822,       %IC3
+0.515006e-7,    %O-p
+0.225696e-4,    %C1-p
+0.185179e-2,    %C2-p
+0.610809e-1,    %C3-p
+0.214630e-4,    %IF-p
+0.217162e-5,    %I1-p
+0.301835e-7,    %I2-p
+0.176099e-2,    %IC2-p
+0.580859e-1     %IC3-p
 ];
 
 S_IKr_0 = [
-0.175298e-3,    %O
-0.998159,       %C1
-0.992513e-3,    %C2
-0.641229e-3,    %C3
-0.319129e-4     %I
+0.332600e-3,    %O
+0.997365,       %C0
+0.135218e-2,    %C1
+0.873596e-3,    %C2
+0.763767e-4     %I
 ];
 
 
 %Initial Conditions
 X0 = [
--82.4202,   %membrane potential %mV
-0.115001,   %myoplasmic Ca (Ca_i)%uM
-0.115001,   %subspace Ca (Ca_ss)%uM
-1299.50,    %JSR Ca (Ca_JSR)    %uM
-1299.50,    %NSR Ca (Ca_NSR)    %uM
-11.2684,    %LTRPNCa            %uM
-125.290,    %HTRPNCa            %uM
-0.0,        %RyR Modulation factor
-14237.1,    %Myoplasmic Na      %uM
-143720,     %Myoplasmic K       %uM
-0.265563e-2,%a_to_f
-0.999977,   %i_to_f
-0.262753e-3,%n_Ks
-0.417069e-3,%a_to_s
-0.998543,   %i_to_s
-0.417069e-3,%a_ur
-0.998543,   %i_ur
-0.417069e-3,%a_Kss
-1.0,        %i_Kss
-S_LCC_0,
+-78.2787,       %membrane potential %mV
+0.100157,       %myoplasmic Ca (Ca_i)%uM
+0.100157,       %subspace Ca (Ca_ss)%uM
+1081.23,        %JSR Ca (Ca_JSR)    %uM
+1081.23,        %NSR Ca (Ca_NSR)    %uM
+8.66981,        %LTRPNCa            %uM
+123.369,        %HTRPNCa            %uM
+10508.5,        %Myoplasmic Na      %uM
+145400,         %Myoplasmic K       %uM
+0.533799e-2,    %a_to_f
+0.999945,       %i_to_f
+0.713943e-3,    %a_ur
+0.996991,       %i_ur
+0.713943e-3,    %a_Kss
+0.225905,       %f_cav_PLM_p
+0.908852,       %f_ecav_IKur
+0.713943e-3,    %a_urp
+0.996991,       %i_urp
+0.252661,       %f_ecav_IKto,f
+0.111499e-2,    %a_to_fp
+0.999983,       %i_to_fp
+0.186637,       %f_cyt_PLB_p
+0.364102,       %f_cyt_Tnl_p
+0.799452e-3,    %R_cav_PKA
+0.626341e-27,   %R_cav_GRK2
+0.132189e-2,    %Gs_cav_a_GTP
+0.180824e-2,    %Gs_cav_By
+0.487356e-3,    %Gs_cav_a_GDP
+0.478002e-1,    %R_ecav_PKA
+0.626341e-27,   %R_ecav_GRK2
+0.230801e-1,    %Gs_ecav_a_GTP
+0.237276e-1,    %Gs_ecav_By
+0.155949e-2,    %R_cyt_PKA
+0.0.626341e-27, %R_cyt_GRK2
+0.0.331511e-3,  %Gs_cyt_a_GTP
+0.663570e-3,    %Gs_cyt_By
+0.333058e-3,    %Gs_cyt_a_GDP
+0,              %cAMP_cav_AC56
+0,              %cAMP_ecav_AC47
+0,              %cAMP_cyt_AC56
+0,              %cAMP_cyt_AC47
+0.125103e-1,    %PDE3_cav_p
+0.580798e-2,    %PDE4_cav_p
+0,              %cAMP_cav_PDE2
+0,              %cAMP_cav_PDE3
+0,              %cAMP_cav_PDE4
+0.158226e-1,    %PDE4_ecav_p
+0,              %cAMP_ecav_PDE2
+0,              %cAMP_ecav_PDE4
+0.120998e-2,    %PDE3_cyt_p
+0.373102e-2,    %PDE4_cyt_p
+0,              %cAMP_cyt_PDE2
+0,              %cAMP_cyt_PDE3
+0,              %cAMP_cyt_PDE4
+7.92317,        %cAMP_cav_PKA
+0.299288,       %ARC_cav
+0.303358,       %A2RC_cav
+0.858440,       %A2R_cav
+0.459397e-2,    %C_cav
+0.823499,       %PKIC_cav
+6.74029,        %cAMP_ecav_PKA
+0.653988,       %ARC_ecav
+0.132861,       %A2RC_ecav
+1.17000,        %A2R_ecav
+0.147623,       %C_ecav
+1.03338,        %PKIC_ecav
+9.32461,        %cAMP_cyt_PKA
+0.996350e-1,    %ARC_cyt
+0.140099e-1,    %A2RC_cyt
+0.273868,       %A2R_cyt
+0.665022e-1,    %C_cyt
+0.218365,       %PKIC_cyt
+0.213571e-1,    %Inhib1_cyt_p
+0.253399,       %cAMP_cav
+0.507889,       %cAMP_ecav
+0.407775,       %cAMP_cyt
+0.254152e-11,   %RyR Modulation factor
+S_LCC_cav_0,
+S_LCC_ecav_0,
 S_RyR_0,
 S_Na_0,
 S_IKr_0
@@ -186,7 +290,7 @@ state_vector_labels = [
 ];
 
 %Stimulation protocols:
-p.protocol = "spike_smooth";
+p.protocol = "none";
 p.L = 0;      %B_AR ligand concentration [uM]
 % none: No stimulation
 % spike: single stim spike. Needed: start, dur, amp
@@ -199,7 +303,7 @@ p.L = 0;      %B_AR ligand concentration [uM]
 % k: sharpness of the smoothed curve
 % Warning: Non-smooth protocols may cause integration failures.
 % Warning: Very short smoothed spikes may not reach full amplitude
-% Warning: protocol misspell leades to "value on the right hand side of assignment is undefined".
+% Warning: protocol misspell leads to "value on the right hand side of assignment is undefined".
 
 p.stim_start = 100;
 p.stim_2nd_start = 130;
@@ -209,12 +313,13 @@ p.stim_amp = -80;
 p.stim_k = 5000;
 
 %Solver
-tspan = 0:0.1:300.0;
+tspan = 0:0.1:100.0;
 options = odeset('RelTol', 1e-6, 'AbsTol', 1e-9, 'MaxStep', 1e-2);
-[t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);
+%[t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);
+dXdt = odes.odes(0,X0,p);
 
 %Plotting
-plotting.line_plot(t, X(:,1));     %a:b, includes a but not b
+%plotting.line_plot(t, X(:,1));     %a:b, includes a but not b
 
 
 
