@@ -1,22 +1,30 @@
 ;1
+%{
+This is the main file of a mouse cardiomyocite model.
+It should be in a directory with other directories such as +odes, +plotting and
++rates. This allows it to call scripts/function from those files
+Refer to the original paper for details on parameters. I tried to stay as consistent
+with the notation as possible, expect when it was too verbose.
+Philippe Aumont
+Bondarenko VE (2014) A Compartmentalized Mathematical Model of the
+B1-Adrenergic Signaling System in Mouse Ventricular Myocytes. PLoS
+ONE 9(2): e89113. https://doi.org/10.1371/journal.pone.0089113
 
-% This is the main file of a mouse cardiomyocite model.
-% It should be in a directory with other directories such as +odes, +plotting and
-% +rates. This allows it to call scripts/function from those files
-% Refer to the original paper for details on parameters. I tried to stay as consistent
-% with the notation as possible, expect when it was too verbose.
-% Philippe Aumont
-% Bondarenko VE (2014) A Compartmentalized Mathematical Model of the
-% B1-Adrenergic Signaling System in Mouse Ventricular Myocytes. PLoS
-% ONE 9(2): e89113. https://doi.org/10.1371/journal.pone.0089113
+Units
+- Time: s
+- Concentration: uM
+- Volume: uL
+- Voltage: mV
+-...
 
+%}
 
 %Parameters
 % %Cell Parameters
 
 p.A_cap = 1.534e-4;   %cm2
 p.V_cell = 38.00e-4;  %uL
-p.V_myo = 25.84e-6;   %uL
+p.V_cyt = 25.84e-6;   %uL
 p.V_JSR = 0.12e-6;    %uL
 p.V_NSR = 2.098e-6;   %uL
 p.V_ss = 1.485e-9;    %uL
@@ -81,7 +89,7 @@ S_LCC_cav_0 = [
 0.320207e-11,   %Cp
 0.308577e-11,   %I1
 0.217536e-7,    %I2
-0.209641e-7     %I3
+0.209641e-7,     %I3
 0.562222e-10,   %O-p
 0.206347e-1,    %C1-p
 0.421668e-3,    %C2-p
@@ -182,35 +190,36 @@ X0 = [
 0.364102,       %f_cyt_Tnl_p
 0.799452e-3,    %R_cav_PKA
 0.626341e-27,   %R_cav_GRK2
-0.132189e-2,    %Gs_cav_a_GTP
+0.132189e-2,    %Gs_cav_aGTP
 0.180824e-2,    %Gs_cav_By
-0.487356e-3,    %Gs_cav_a_GDP
+0.487356e-3,    %Gs_cav_aGDP
 0.478002e-1,    %R_ecav_PKA
 0.626341e-27,   %R_ecav_GRK2
-0.230801e-1,    %Gs_ecav_a_GTP
+0.230801e-1,    %Gs_ecav_aGTP
 0.237276e-1,    %Gs_ecav_By
+0.648475e-3,    %Gs_ecav_aGDP
 0.155949e-2,    %R_cyt_PKA
-0.0.626341e-27, %R_cyt_GRK2
-0.0.331511e-3,  %Gs_cyt_a_GTP
+0.626341e-27,   %R_cyt_GRK2
+0.331511e-3,    %Gs_cyt_aGTP
 0.663570e-3,    %Gs_cyt_By
-0.333058e-3,    %Gs_cyt_a_GDP
-0,              %cAMP_cav_AC56
-0,              %cAMP_ecav_AC47
-0,              %cAMP_cyt_AC56
-0,              %cAMP_cyt_AC47
+0.333058e-3,    %Gs_cyt_aGDP
+0.000000,              %cAMP_cav_AC56
+0.000000,              %cAMP_ecav_AC47
+0.000000,              %cAMP_cyt_AC56
+0.000000,              %cAMP_cyt_AC47
 0.125103e-1,    %PDE3_cav_p
 0.580798e-2,    %PDE4_cav_p
-0,              %cAMP_cav_PDE2
-0,              %cAMP_cav_PDE3
-0,              %cAMP_cav_PDE4
+0.000000,              %cAMP_cav_PDE2
+0.000000,              %cAMP_cav_PDE3
+0.000000,              %cAMP_cav_PDE4
 0.158226e-1,    %PDE4_ecav_p
-0,              %cAMP_ecav_PDE2
-0,              %cAMP_ecav_PDE4
+0.000000,              %cAMP_ecav_PDE2
+0.000000,              %cAMP_ecav_PDE4
 0.120998e-2,    %PDE3_cyt_p
 0.373102e-2,    %PDE4_cyt_p
-0,              %cAMP_cyt_PDE2
-0,              %cAMP_cyt_PDE3
-0,              %cAMP_cyt_PDE4
+0.000000,              %cAMP_cyt_PDE2
+0.000000,              %cAMP_cyt_PDE3
+0.000000,              %cAMP_cyt_PDE4
 7.92317,        %cAMP_cav_PKA
 0.299288,       %ARC_cav
 0.303358,       %A2RC_cav
@@ -292,6 +301,8 @@ state_vector_labels = [
 %Stimulation protocols:
 p.protocol = "none";
 p.L = 0;      %B_AR ligand concentration [uM]
+p.IBMX = 0;   %PDE inhibitor concentration [uM]
+
 % none: No stimulation
 % spike: single stim spike. Needed: start, dur, amp
 % spike_smooth: sigmoidal spike. Needed: start, dur, amp, k
@@ -313,10 +324,10 @@ p.stim_amp = -80;
 p.stim_k = 5000;
 
 %Solver
-tspan = 0:0.1:100.0;
+tspan = 0:0.1:100.0; %THIS MODEL USES S AND NOT MS FOR TIME UNITS
 options = odeset('RelTol', 1e-6, 'AbsTol', 1e-9, 'MaxStep', 1e-2);
 %[t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);
-dXdt = odes.odes(0,X0,p);
+odes.odes(0,X0,p);
 
 %Plotting
 %plotting.line_plot(t, X(:,1));     %a:b, includes a but not b
