@@ -46,10 +46,10 @@ function dAC = AC(S, p)
             *(1 + V_47_GBy*Gs_cyt_By^h_47_GsBy/(K_m_47_GsBy + Gs_cyt_By^h_47_GsBy));
 
   %dXdt
-  dcAMP_cav = k_cav_56*AC56_cav*ATP/(K_m_ATP + ATP);
-  dcAMP_ecav = k_ecav_47*AC47_ecav*ATP/(K_m_ATP + ATP);
+  dcAMP_cav_56 = k_cav_56*AC56_cav*ATP/(K_m_ATP + ATP);
+  dcAMP_ecav_47 = k_ecav_47*AC47_ecav*ATP/(K_m_ATP + ATP);
   dcAMP_cyt_56 = k_cyt_56*AC56_cyt*ATP/(K_m_ATP + ATP);
   dcAMP_cyt_47 = k_cyt_47*AC47_cyt*ATP/(K_m_ATP + ATP);
 
-  dAC = [dcAMP_cav;dcAMP_ecav;dcAMP_cyt_56;dcAMP_cyt_47];
+  dAC = [dcAMP_cav_56;dcAMP_ecav_47;dcAMP_cyt_56;dcAMP_cyt_47];
 endfunction

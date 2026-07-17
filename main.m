@@ -28,8 +28,8 @@ p.V_cyt = 25.84e-6;   %uL
 p.V_JSR = 0.12e-6;    %uL
 p.V_NSR = 2.098e-6;   %uL
 p.V_ss = 1.485e-9;    %uL
-p.V_cav = 7.600e-05;  %uL
-p.V_ecav = 1.520e-04; %uL
+p.V_cav = 7.600e-05;  %uL (2% of cell volume)
+p.V_ecav = 1.520e-04; %uL (4% of cell volume)
 
 % %Extracellular Ion concentrations
 p.K_o = 5400;    %uM
@@ -37,47 +37,40 @@ p.Na_o = 140000; %uM
 p.Ca_o = 1800;   %uM
 
 % %SR Parameters
-p.v1 = 4.5;       %ms-1
-p.v2 = 1.74e-5;   %ms-1
-p.v3 = 0.45;      %uM/ms
-p.K_m_up = 0.5;   %uM
-p.T_tr = 20.0;    %ms
-p.T_xfer = 8.0;   %ms
+p.v2 = 1.74e-2;   %s-1
+p.T_tr = 0.02;    %s
+p.T_xfer = 0.008; %s
 
-% %LCC parameters
-p.G_CaL = 0.1729;     %mS/uF
-p.E_Ca_L = 63.0;      %mV
-p.I_CaL_max = 7.0;    %pA/pF
-
-% %Buffering
-p.LTRPN_tot = 70.0;   %uM
-p.HTRPN_tot = 140.0;  %uM
-p.k_htrpn_on = 0.00237; %1/uM*ms
-p.k_htrpn_off = 3.2e-5;  %ms^-1
-p.k_ltrpn_on = 0.0327;  %1/uM*ms
-p.k_ltrpn_off = 0.0196;  %ms^-1
+% %Calmodulin and Calsequestrin
 p.CMDN_tot = 50.0;    %uM
 p.CSQN_tot = 15000.0; %uM
 p.K_CMDN = 0.238;     %uM
 p.K_CSQN = 800.0;     %uM
 
 % %Membrane current parameters
-p.C_m = 1.0;        %uF/cm2
-p.F = 96.5;         %C/mmol
-p.T = 298;          %K
-p.R = 8.314;        %J/mol*K
-p.k_NaCa = 292.8;   %pA/pF
-p.I_pCa_max = 1.0;  %pA/pF
-p.K_m_pCa = 0.5;    %uM
-p.G_Cab = 0.000367; %mS/uF
-p.G_Na = 13.0;      %mS/uF
-p.G_Nab = 0.0026;   %mS/uF
-p.G_Kto_f = 0.4067; %Apex = 0.4067 | Septum = 0.0798
-p.G_Ks = 0.00575;   %mS/uF
-p.G_Kto_s = 0.0;    %Apex = 0.0   | Septum = 0.0629
-p.G_Kur = 0.160;    %Apex = 0.160 | Septum = 0.0975
-p.G_Kss = 0.050;    %Apex = 0.050 | Septum = 0.0324
-p.G_Kr = 0.078;     %mS/uF
+p.C_m = 1.0;          %uF/cm2
+p.F = 96.5;           %C/mmol
+p.T = 298;            %K
+p.R = 8.314;          %J/mol*K
+p.k_NaCa = 275;       %pA/pF
+p.Km_Na = 87500;      %uM
+p.Km_Ca = 1380;       %uM
+p.k_sat = 0.27;
+p.n = 0.35;
+p.I_max_pCa = 0.051;
+p.Km_pCa = 0.5;       %uM
+p.G_Cab = 0.000284;   %mS/uF
+p.G_Nab = 0.0063;     %mS/uF
+p.G_Kss = 0.0611;     %mS/uF
+p.G_Ks = 0.00575;     %mS/uF
+p.G_Kr = 0.078;       %mS/uF
+p.k_f = 23.761;       %1/s
+p.k_b = 36.778;       %1/s
+p.GG_ClCa = 10.0;     %mS/uF
+p.Km_Cl = 10.0;       %uM
+p.E_Cl = -40;         %mV
+
+
 
 %Initial Markov State conditions
 S_LCC_cav_0 = [
@@ -89,7 +82,7 @@ S_LCC_cav_0 = [
 0.320207e-11,   %Cp
 0.308577e-11,   %I1
 0.217536e-7,    %I2
-0.209641e-7,     %I3
+0.209641e-7,    %I3
 0.562222e-10,   %O-p
 0.206347e-1,    %C1-p
 0.421668e-3,    %C2-p
@@ -203,23 +196,23 @@ X0 = [
 0.331511e-3,    %Gs_cyt_aGTP
 0.663570e-3,    %Gs_cyt_By
 0.333058e-3,    %Gs_cyt_aGDP
-0.000000,              %cAMP_cav_AC56
-0.000000,              %cAMP_ecav_AC47
-0.000000,              %cAMP_cyt_AC56
-0.000000,              %cAMP_cyt_AC47
+0.000000,       %cAMP_cav_AC56
+0.000000,       %cAMP_ecav_AC47
+0.000000,       %cAMP_cyt_AC56
+0.000000,       %cAMP_cyt_AC47
 0.125103e-1,    %PDE3_cav_p
 0.580798e-2,    %PDE4_cav_p
-0.000000,              %cAMP_cav_PDE2
-0.000000,              %cAMP_cav_PDE3
-0.000000,              %cAMP_cav_PDE4
+0.000000,       %cAMP_cav_PDE2
+0.000000,       %cAMP_cav_PDE3
+0.000000,       %cAMP_cav_PDE4
 0.158226e-1,    %PDE4_ecav_p
-0.000000,              %cAMP_ecav_PDE2
-0.000000,              %cAMP_ecav_PDE4
+0.000000,       %cAMP_ecav_PDE2
+0.000000,       %cAMP_ecav_PDE4
 0.120998e-2,    %PDE3_cyt_p
 0.373102e-2,    %PDE4_cyt_p
-0.000000,              %cAMP_cyt_PDE2
-0.000000,              %cAMP_cyt_PDE3
-0.000000,              %cAMP_cyt_PDE4
+0.000000,       %cAMP_cyt_PDE2
+0.000000,       %cAMP_cyt_PDE3
+0.000000,       %cAMP_cyt_PDE4
 7.92317,        %cAMP_cav_PKA
 0.299288,       %ARC_cav
 0.303358,       %A2RC_cav
@@ -250,6 +243,7 @@ S_Na_0,
 S_IKr_0
 ];
 
+% Below needs update
 state_vector_labels = [
 "Membrane potential [mV]",
 "Myoplasmic calcium [uM]",

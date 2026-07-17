@@ -24,38 +24,35 @@ function dxdt = odes(t, X, p)
   i_to_fp = X(21);
   f_cyt_PLB_p = X(22);
   f_cyt_Tnl_p = X(23);
-  R_cav_PKA = X(24);  %
-  R_cav_GRK2 = X(25); %
-  Gs_cav_aGTP = X(26);%
-  Gs_cav_By = X(27);  %
-  Gs_cav_aGDP = X(28);%
-  R_ecav_PKA = X(29); %
-  R_ecav_GRK2 = X(30);%
-  Gs_ecav_aGTP = X(31);%
-  Gs_ecav_By = X(32);%
-  Gs_ecav_aGDP = X(33);%
-  R_cyt_PKA = X(34);%
-  R_cyt_GRK2 = X(35);%
-  Gs_cyt_aGTP = X(36);%
-  Gs_cyt_By = X(37);%
-  Gs_cyt_aGDP = X(38);%
-
-
-  %Counts are wrong
+  R_cav_PKA = X(24);
+  R_cav_GRK2 = X(25);
+  Gs_cav_aGTP = X(26);
+  Gs_cav_By = X(27);
+  Gs_cav_aGDP = X(28);
+  R_ecav_PKA = X(29);
+  R_ecav_GRK2 = X(30);
+  Gs_ecav_aGTP = X(31);
+  Gs_ecav_By = X(32);
+  Gs_ecav_aGDP = X(33);
+  R_cyt_PKA = X(34);
+  R_cyt_GRK2 = X(35);
+  Gs_cyt_aGTP = X(36);
+  Gs_cyt_By = X(37);
+  Gs_cyt_aGDP = X(38);
   cAMP_cav_AC56 = X(39);
   cAMP_ecav_AC47 = X(40);
   cAMP_cyt_AC56 = X(41);
   cAMP_cyt_AC47 = X(42);
-  PDE3_cav_p = X(43);%
-  PDE4_cav_p = X(44);%
+  PDE3_cav_p = X(43);
+  PDE4_cav_p = X(44);
   cAMP_cav_PDE2 = X(45);
   cAMP_cav_PDE3 = X(46);
   cAMP_cav_PDE4 = X(47);
-  PDE4_ecav_p = X(48);%
+  PDE4_ecav_p = X(48);
   cAMP_ecav_PDE2 = X(49);
   cAMP_ecav_PDE4 = X(50);
-  PDE3_cyt_p = X(51);%
-  PDE4_cyt_p = X(52);%
+  PDE3_cyt_p = X(51);
+  PDE4_cyt_p = X(52);
   cAMP_cyt_PDE2 = X(53);
   cAMP_cyt_PDE3 = X(54);
   cAMP_cyt_PDE4 = X(55);
@@ -77,7 +74,7 @@ function dxdt = odes(t, X, p)
   A2R_cyt = X(71);
   C_cyt = X(72);
   PKIC_cyt = X(73);
-  Inhib1_cyt_p = X(74);
+  Inhib1_cyt_p_tot = X(74);
   cAMP_cav = X(75);
   cAMP_ecav = X(76);
   cAMP_cyt = X(77);
@@ -115,9 +112,10 @@ function dxdt = odes(t, X, p)
   P_open_Na = S_Na(1);
   P_open_IKr = S_IKr(1);
 %}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Signaling part to make
+%============================== Signalling =====================================
   C = [C_cav; C_ecav; C_cyt];
   cAMP = [cAMP_cav; cAMP_ecav; cAMP_cyt];
+
   %Beta1-Adrenoreceptor module
   S_B_AR = X(24:38);
   dB_AR = rates.B_AR(S_B_AR, C, p);
@@ -131,10 +129,27 @@ function dxdt = odes(t, X, p)
   dPDE = rates.PDE(S_PDE, C, cAMP, p);
 
   %cAMP-Protein Kinase A Module
+  S_PKA = [X(57:61);X(63:67);X(69:73)];
+  dPKA = rates.PKA(S_PKA, C, cAMP, p);
 
+  %Protein Phosphatase & Inhibitor-1 Module
+  S_PP = [Inhib1_cyt_p_tot];
+  dPP = rates.PP(S_PP, C);
 
+  %cAMP flux calculation
+  S_cAMP = [dAC; dPDE(3:5); dPDE(7:8); dPDE(11:13); dPKA(1); dPKA(7); dPKA(13)];
+  dcAMP_tot = rates.cAMP(S_cAMP, cAMP, p);
 
   %%%%%%%%%%%%%%%%%%%%%%%%% Electrochemical part to review
+  %MSM
+  P_open_RyR = rates.LCC_cav(Ca_ss,)
+
+  %P_open_LCC = S_LCC(1);
+  %P_open_Na = S_Na(1);
+  %P_open_IKr = S_IKr(1);
+
+
+
   %Calculating Factors
 %{
   B_i = rates.buffering(p.CMDN_tot, Ca_i, p.K_CMDN);
