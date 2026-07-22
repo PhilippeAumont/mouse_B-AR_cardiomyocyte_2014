@@ -142,7 +142,11 @@ function dxdt = odes(t, X, p)
 
   %%%%%%%%%%%%%%%%%%%%%%%%% Electrochemical part to review
   %MSM
-  P_open_RyR = rates.LCC_cav(Ca_ss,)
+  dS_LCC_cav = rates.LCC_cav(S_LCC_cav, C(1), Ca_i, V, p);
+  I_cav_CaL = 0.2*(0.3772*S_LCC_cav(1) +  0.7875*S_LCC_cav(10))*(V-52.0);
+
+  %current eq A.139
+
 
   %P_open_LCC = S_LCC(1);
   %P_open_Na = S_Na(1);
