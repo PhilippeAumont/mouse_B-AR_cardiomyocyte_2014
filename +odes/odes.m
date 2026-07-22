@@ -92,26 +92,7 @@ function dxdt = odes(t, X, p)
   S_RyR = max(S_RyR, 0); S_RyR = S_RyR/sum(S_RyR);
   S_Na = max(S_Na, 0); S_Na = S_Na/sum(S_Na);
   S_IKr = max(S_IKr, 0); S_IKr = S_IKr/sum(S_IKr);
-%%% Wrong below
-%{
-  %Build Q matrix for MSM
-  Q_RyR = rates.Q_ryr(Ca_ss);
-  Q_LCC = rates.Q_lcc(V, Ca_ss);
-  Q_Na = rates.Q_na(V);
-  Q_IKr = rates.Q_ikr(V);
 
-  %Get state change for MSM
-  dS_RyR = Q_RyR * S_RyR;
-  dS_LCC = Q_LCC * S_LCC;
-  dS_Na = Q_Na * S_Na;
-  dS_IKr = Q_IKr * S_IKr;
-
-  %Get open probability for MSM
-  P_open_RyR = S_RyR(1) + S_RyR(2);
-  P_open_LCC = S_LCC(1);
-  P_open_Na = S_Na(1);
-  P_open_IKr = S_IKr(1);
-%}
 %============================== Signalling =====================================
   C = [C_cav; C_ecav; C_cyt];
   cAMP = [cAMP_cav; cAMP_ecav; cAMP_cyt];
@@ -142,17 +123,19 @@ function dxdt = odes(t, X, p)
 
   %%%%%%%%%%%%%%%%%%%%%%%%% Electrochemical part to review
   %MSM
+  %LCC
   dS_LCC_cav = rates.LCC_cav(S_LCC_cav, C(1), Ca_i, V, p);
   I_cav_CaL = 0.2*(0.3772*S_LCC_cav(1) +  0.7875*S_LCC_cav(10))*(V-52.0);
 
-  %current eq A.139
+  dS_LCC_ecav = rates.LCC_ecav(S_LCC_ecav, C(2), Ca_ss, V, p);
+  I_ecav_CaL = 0.8*(0.3772*S_LCC_ecav(1) + 0.7875*S_LCC_ecav(10))*(V-52.0);
 
+  I_CaL = I_cav_CaL + I_ecav_CaL;
 
-  %P_open_LCC = S_LCC(1);
-  %P_open_Na = S_Na(1);
-  %P_open_IKr = S_IKr(1);
-
-
+  %Fast Na
+  dS_Na = rates.Fast_Na(S_Na, C(1), V, p);
+  E_Na = (p.R*p.T/p.F) * log((0.9*p.Na_o + 0.1*p.K_o)/(0.9*Na_i + 0.1*K_i));
+  I_Na = (14.4*S_Na(1) + 18.0*S_Na(10))*(V-E_Na);
 
   %Calculating Factors
 %{
