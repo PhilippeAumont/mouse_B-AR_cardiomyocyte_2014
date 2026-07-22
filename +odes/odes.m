@@ -133,9 +133,16 @@ function dxdt = odes(t, X, p)
   I_CaL = I_cav_CaL + I_ecav_CaL;
 
   %Fast Na
-  dS_Na = rates.Fast_Na(S_Na, C(1), V, p);
+  dS_Na = rates.Fast_Na(S_Na, C(1), V);
   E_Na = (p.R*p.T/p.F) * log((0.9*p.Na_o + 0.1*p.K_o)/(0.9*Na_i + 0.1*K_i));
   I_Na = (14.4*S_Na(1) + 18.0*S_Na(10))*(V-E_Na);
+
+  %RyR
+  dS_RyR = rates.RyR(S_RyR, Ca_ss, C(2), p);
+  %Eq A.270 v1 is in ryr module
+
+
+
 
   %Calculating Factors
 %{

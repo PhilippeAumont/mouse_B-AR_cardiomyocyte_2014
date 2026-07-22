@@ -19,7 +19,6 @@ function dS_LCC = LCC_ecav(S, C_ecav, Ca, V, p)
   i2p = S(17);
   i3p = S(18);
 
-  C = C_ecav;
 
   %Parameters
   f_ecav_ICaL = 0.8;
@@ -31,6 +30,10 @@ function dS_LCC = LCC_ecav(S, C_ecav, Ca, V, p)
   k_co = 1000;                %1/s
   k_cop = 4000;               %1/s
   k_oc = 1000;                %1/s
+  k_ICaL_PKA = 1.74e-2;       %1/s
+  K_ICaL_PKA = 0.5;           %uM
+  k_ICaL_PP = 2.325e-4;       %1/s
+  K_ICaL_PP = 0.2;            %uM
 
   PP = 0.1;                   %uM , CTE from PP and Inhbitor 1 module
 
@@ -41,24 +44,31 @@ function dS_LCC = LCC_ecav(S, C_ecav, Ca, V, p)
   I_CaL_ecav_tot = f_ecav_ICaL*I_CaL_tot*p.V_cell/p.V_ecav;
   y = K_pc_max*Ca/(K_pc_half+Ca);
 
-  c1_c1p = rates.P(c1,C,I_CaL_ecav_tot);
-  c1p_c1 = rates.DP(c1p,PP,I_CaL_ecav_tot)*ap^3*k_cop/(a^3*k_co);
-  c2_c2p = rates.P(c2,C,I_CaL_ecav_tot);
-  c2p_c2 = rates.DP(c2p,PP,I_CaL_ecav_tot)*ap^2*k_cop/(a^2*k_co);
-  c3_c3p = rates.P(c3,C,I_CaL_ecav_tot);
-  c3p_c3 = rates.DP(c3p,PP,I_CaL_ecav_tot)*ap*k_cop/(a*k_co);
-  c4_c4p = rates.P(c4,C,I_CaL_ecav_tot);
-  c4p_c4 = rates.DP(c4p,PP,I_CaL_ecav_tot)*k_cop/k_co;
-  cp_cpp = rates.P(cp,C,I_CaL_ecav_tot);
-  cpp_cp = rates.DP(cpp,PP,I_CaL_ecav_tot)*a*k_cop/(ap*k_co);
-  o_op = rates.P(o,C,I_CaL_ecav_tot);
-  op_o = rates.DP(op,PP,I_CaL_ecav_tot)*a/ap;
-  i1_i1p = rates.P(i1,C,I_CaL_ecav_tot);
-  i1p_i1 = rates.DP(i1p,PP,I_CaL_ecav_tot)*a/ap;
-  i2_i2p = rates.P(i2,C,I_CaL_ecav_tot);
-  i2p_i2 = rates.DP(i2p,PP,I_CaL_ecav_tot);
-  i3_i3p = rates.P(i3,C,I_CaL_ecav_tot);
-  i3p_i3 = rates.DP(i3p,PP,I_CaL_ecav_tot);
+  function k = P(S)
+    k = k_ICaL_PKA*C_ecav/(K_ICaL_PKA+I_CaL_ecav_tot*S);
+  end
+  function k = DP(S)
+    k = k_ICaL_PP*PP/(K_ICaL_PP+I_CaL_ecav_tot*S);
+  end
+
+  c1_c1p = P(c1);
+  c1p_c1 = DP(c1p)*ap^3*k_cop/(a^3*k_co);
+  c2_c2p = P(c2);
+  c2p_c2 = DP(c2p)*ap^2*k_cop/(a^2*k_co);
+  c3_c3p = P(c3);
+  c3p_c3 = DP(c3p)*ap*k_cop/(a*k_co);
+  c4_c4p = P(c4);
+  c4p_c4 = DP(c4p)*k_cop/k_co;
+  cp_cpp = P(cp);
+  cpp_cp = DP(cpp)*a*k_cop/(ap*k_co);
+  o_op = P(o);
+  op_o = DP(op)*a/ap;
+  i1_i1p = P(i1);
+  i1p_i1 = DP(i1p)*a/ap;
+  i2_i2p = P(i2);
+  i2p_i2 = DP(i2p);
+  i3_i3p = P(i3);
+  i3p_i3 = DP(i3p);
 
   %Prepare MSM Transition matrix rows
   O =   [-(k_oc+y+0.001*K_pcf+o_op),0,0,0,0,k_co,K_pcb,0.001*a,0,op_o,0,0,0,0,0,0,0,0];

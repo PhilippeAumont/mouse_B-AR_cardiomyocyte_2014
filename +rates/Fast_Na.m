@@ -1,4 +1,4 @@
-function dS_Na = Fast_Na(S, C_cav, V, p)
+function dS_Na = Fast_Na(S, C_cav, V)
   %Unpack state vector
   o = S(1);
   c1 = S(2);
