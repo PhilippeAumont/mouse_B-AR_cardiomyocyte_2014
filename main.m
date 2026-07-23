@@ -37,15 +37,17 @@ p.Na_o = 140000; %uM
 p.Ca_o = 1800;   %uM
 
 % %SR Parameters
+p.v1 = 4500;      %1/s %From RyR Module Parameters
 p.v2 = 1.74e-2;   %s-1
-p.T_tr = 0.02;    %s
-p.T_xfer = 0.008; %s
+p.v3 = 306.0;     %1/s %From PLB module
+p.t_tr = 0.02;    %s
+p.t_xfer = 0.008; %s
 
 % %Calmodulin and Calsequestrin
 p.CMDN_tot = 50.0;    %uM
 p.CSQN_tot = 15000.0; %uM
-p.K_CMDN = 0.238;     %uM
-p.K_CSQN = 800.0;     %uM
+p.Km_CMDN = 0.238;     %uM
+p.Km_CSQN = 800.0;     %uM
 
 % %Membrane current parameters
 p.C_m = 1.0;          %uF/cm2
