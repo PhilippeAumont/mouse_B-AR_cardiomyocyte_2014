@@ -94,6 +94,7 @@ function dxdt = odes(t, X, p)
   S_IKr = max(S_IKr, 0); S_IKr = S_IKr/sum(S_IKr);
 
 %============================== Signalling =====================================
+
   C = [C_cav; C_ecav; C_cyt];
   cAMP = [cAMP_cav; cAMP_ecav; cAMP_cyt];
 
@@ -115,13 +116,15 @@ function dxdt = odes(t, X, p)
 
   %Protein Phosphatase & Inhibitor-1 Module
   S_PP = [Inhib1_cyt_p_tot];
-  dPP = rates.PP(S_PP, C);
+  dPP = rates.PP(S_PP, C(3));
+  dInhib1_cyt_p_tot = dPP(1);
+  PP1_cyt_f = dPP(2);
 
   %cAMP flux calculation
   S_cAMP = [dAC; dPDE(3:5); dPDE(7:8); dPDE(11:13); dPKA(1); dPKA(7); dPKA(13)];
-  dcAMP_tot = rates.cAMP(S_cAMP, cAMP, p);
+  dcAMP = rates.cAMP(S_cAMP, cAMP, p);
 
-  %%%%%%%%%%%%%%%%%%%%%%%%% Electrochemical part to review
+%========================== Electrochemical Section ============================
   %MSM
   %LCC
   dS_LCC_cav = rates.LCC_cav(S_LCC_cav, C(1), Ca_i, V, p);
@@ -141,43 +144,88 @@ function dxdt = odes(t, X, p)
   dS_RyR = rates.RyR(S_RyR, Ca_ss, C(2), p);
 
   %IKr
-  E_Kr = (p.R*p.T/p.F) * log((0.98*p.K_o + 0.02*p.Na_o)/(0.98*K_i + 0.02*Na_i);
+  E_Kr = (p.R*p.T/p.F) * log((0.98*p.K_o + 0.02*p.Na_o)/(0.98*K_i + 0.02*Na_i));
   dS_IKr = rates.IKr(S_IKr, V, p);
   I_Kr = p.G_Kr*S_IKr(1)*(V-E_Kr);
 
   %Others
   %PLB
+  S_PLB = [f_cyt_PLB_p; PP1_cyt_f];
+  dPLB = rates.PP(S_PLB, C(3));
+  Km_up = dPLB(1);
+  df_cyt_PLB_p = dPLB(2);
 
   %Troponin
   S_Tn1 = [LTRPNCa;HTRPNCa;f_cyt_Tnl_p];
-  dTn1 = rates.Troponin(S_Tn1, Ca_i, C(3));
+  dTn1 = rates.Tn1(S_Tn1, Ca_i, C(3));
+  k_off_ltrpn = dTn1(1);
+  df_cyt_Tn1_p = dTn1(2);
+  dLTRPNCa = dTn1(3);
+  dHTRPNCa = dTn1(4);
 
   %Potassium channels (Kur, Kto,f, K1, Kss)
+  S_K = [f_ecav_IKur;a_ur;i_ur;a_urp;i_urp;f_ecav_IKto_f;a_to_f;i_to_f;a_to_fp;i_to_fp;a_Kss];
+  dS_K = rates.K_channels(S_K, C(2), V, K_i, p);
+  I_Kur = dS_K(1);
+  I_Kto_f = dS_K(2);
+  I_K1 = dS_K(3);
+  I_Kss = dS_K(4);
 
   %Other channels (NaK, NCX, CaCl, Ca_bckgrd, Na_bckgrd, Ca pump)
+  dOthers = rates.Misc_channels(C(1), V, Na_i, Ca_i, E_Na, f_cav_PLM_p, p);
+  df_cav_PLM_p = dOthers(1);
+  I_NaK = dOthers(2);
+  I_pCa = dOthers(3);
+  I_NaCa = dOthers(4);
+  I_Cab = dOthers(5);
+  I_Nab = dOthers(6);
+  I_ClCa = dOthers(7);
 
-
+%================================ Compiling ====================================
   %Fluxes
-  J_rel = p.v1*(S_RyR(1)+S_RyR(2)+S_RyR(5)+S_RyR(6)*(Ca_JSR-Ca_ss*P_RyR);
+  J_rel = p.v1*(S_RyR(1)+S_RyR(2)+S_RyR(5)+S_RyR(6))*(Ca_JSR-Ca_ss*P_RyR);
   J_tr = (Ca_NSR - Ca_JSR)/p.t_tr;
   J_xfer = (Ca_ss - Ca_i)/p.t_xfer;
   J_leak = p.v2*(Ca_NSR - Ca_i);
-  J_up = p.v3*Ca_i^2/(Km_up^2 + Ca_i^2); %Km_up exported from PLB module
+  J_up = p.v3*Ca_i^2/(Km_up^2 + Ca_i^2);
   J_trpn = 2.37*Ca_i*(140.0-HTRPNCa) - 0.032*HTRPNCa + 32.7*Ca_i*(70.0 - LTRPNCa)...
           - k_off_ltrpn*LTRPNCa;  %Params from Tn1 module
 
   dP_RyR = -0.04*P_RyR - 0.01*(I_ecav_CaL/7.0)*e^-((V+5.0)^2/648.0);
 
   %Concentration changes and buffers
+  Ca = [Ca_i; Ca_ss; Ca_JSR; Ca_NSR];
+  J = [J_rel; J_tr; J_xfer; J_leak; J_up; J_trpn];
+  I = [I_cav_CaL; I_ecav_CaL; I_Na; I_Kr; I_Kur; I_Kto_f; I_K1; I_Kss; I_NaK; I_pCa; I_NaCa; I_Cab; I_Nab; I_ClCa];
+  dC = rates.Concentrations(Ca, J, I, p);
 
   %membrane potential
-  I_stim = 0
-  dV = -(I_CaL + IpCa + I_NaCa + I_Cab + I_Na + I_Nab + I_NaK + I_Kto_f...
+  I_stim = 0;
+  dV = -(I_CaL + I_pCa + I_NaCa + I_Cab + I_Na + I_Nab + I_NaK + I_Kto_f...
         + I_K1 + I_Kur + I_Kss + I_Kr + I_ClCa - I_stim)/p.C_m;
 
-
-
   %Pack output
-  dxdt = [];
+  dxdt = [
+  dV;
+  dC(1:4);
+  dLTRPNCa; dHTRPNCa;
+  dC(5:6);
+  dS_K(5:9);
+  f_cav_PLM_p;
+  dS_K(10:15);
+  df_cyt_PLB_p; df_cyt_Tn1_p;
+  dB_AR;
+  dAC;
+  dPDE;
+  dPKA;
+  dInhib1_cyt_p_tot;
+  dcAMP;
+  dP_RyR;
+  dS_LCC_cav;
+  dS_LCC_ecav;
+  dS_RyR;
+  dS_Na;
+  dS_IKr
+  ];
 
 endfunction

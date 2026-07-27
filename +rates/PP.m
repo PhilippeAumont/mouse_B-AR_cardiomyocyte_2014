@@ -1,7 +1,7 @@
 function dPP = PP(S, C)
   %Unpack state vectorize
   Inhib1_cyt_p_tot = S(1);
-  C_cyt = C(3);
+  C_cyt = C;
 
   %Parameters
   PP1_cyt = 0.2;          %uM

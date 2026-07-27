@@ -1,16 +1,18 @@
-function dS = K_channels(S, V, p)
+function dS = K_channels(S, C_ecav, V, K_i, p)
   %Unpack state vector
+  f_ecav_IKur = S(1);
+  a_ur = S(2);
+  i_ur = S(3);
+  a_urp = S(4);
+  i_urp = S(5);
 
-  C_ecav
-  a_ur
-  i_ur
-  a_urp
-  i_urp
+  f_ecav_IKto = S(6);
+  a_to_f = S(7);
+  i_to_f = S(8);
+  a_to_fp = S(9);
+  i_to_fp = S(10);
 
-  a_to_f
-  i_to_f
-  a_to_fp
-  i_to_fp
+  a_Kss = S(11);
 
   %Ultra-rapidly activating delayed rectifier K channel
   % Parameters
@@ -81,25 +83,14 @@ function dS = K_channels(S, V, p)
   %Kss
   I_Kss = p.G_Kss*a_Kss*(V-E_K);
   t_Kss = 1235.5/(e^(0.0862*(V+40.0)) + e^(-0.0862*(V+40.0))) + 13.17;
-  ds_Kss = (a_ss-a_Kss)/t_Kss;
+  da_Kss = (a_ss-a_Kss)/t_Kss;
 
 
   %Pack output
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  dS = [
+  I_Kur; I_Kto_f; I_K1; I_Kss;
+  da_to_f; di_to_f; da_ur; di_ur; da_Kss; df_ecav_IKur;
+  da_urp; di_urp; df_ecav_IKto; da_to_fp; di_to_fp
+  ];
 
 endfunction

@@ -1,4 +1,4 @@
-function dB_ARdt = B_AR(S, C, p)
+function dB_AR = B_AR(S, C, p)
 
   %Unpack state vector
   R_cav_PKA = S(1);
@@ -102,7 +102,8 @@ function dB_ARdt = B_AR(S, C, p)
   dGs_cyt_By = k_act2_Gs*R_Gs_cyt_np + k_act1_Gs*LR_Gs_cyt_np - k_reas_Gs*Gs_cyt_By*Gs_cyt_aGDP;
   dGs_cyt_aGDP = k_hyd_Gs*Gs_cyt_aGTP - k_reas_Gs*Gs_cyt_By*Gs_cyt_aGDP;
 
-  dB_ARdt = [dR_cav_PKA; dR_cav_GRK2; dGs_cav_aGTP; dGs_cav_By; dGs_cav_aGDP;
+  dB_AR = [dR_cav_PKA; dR_cav_GRK2; dGs_cav_aGTP; dGs_cav_By; dGs_cav_aGDP;
              dR_ecav_PKA;dR_ecav_GRK2;dGs_ecav_aGTP;dGs_ecav_By;dGs_ecav_aGDP;
              dR_cyt_PKA; dR_cyt_GRK2; dGs_cyt_aGTP; dGs_cyt_By; dGs_cyt_aGDP];
+
  endfunction

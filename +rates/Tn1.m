@@ -1,4 +1,4 @@
-function dS = Troponin(S, Ca_i, C_cyt)
+function dS = Tn1(S, Ca_i, C_cyt)
   %Unpack state vector
   LTRPNCa = S(1);
   HTRPNCa = S(2);
@@ -28,5 +28,5 @@ function dS = Troponin(S, Ca_i, C_cyt)
   dHTRPNCa = k_on_htrpn*Ca_i*(HTRPN_tot-HTRPNCa) - k_off_htrpn*HTRPNCa;
 
   %Package output
-  dS = [df_cyt_Tn1_p; dLTRPNCa; dHTRPNCa];
+  dS = [k_off_ltrpn; df_cyt_Tn1_p; dLTRPNCa; dHTRPNCa];
 endfunction

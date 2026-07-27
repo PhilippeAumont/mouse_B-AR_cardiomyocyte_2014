@@ -115,4 +115,5 @@ function dPKA = PKA(S, C, cAMP, p)
   dPKA = [dcAMP_cav_PKA;dARC_cav;dA2RC_cav;dA2R_cav;dC_cav;dPKIC_cav;dcAMP_ecav_PKA;
           dARC_ecav;dA2RC_ecav;dA2R_ecav;dC_ecav;dPKIC_ecav;dcAMP_cyt_PKA;dARC_cyt;
           dA2RC_cyt;dA2R_cyt;dC_cyt;dPKIC_cyt];
+
 endfunction

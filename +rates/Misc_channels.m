@@ -1,4 +1,4 @@
-function dS = Misc_channels*(S, C_cav, Na_i, Ca_i, E_Na, p)
+function dS = Misc_channels(C_cav, V, Na_i, Ca_i, E_Na, f_cav_PLM_p, p)
   %Na-K pump and Phospholemman (PLM)
   % Parameters
   I_max_NaK = 4.0;
@@ -37,5 +37,12 @@ function dS = Misc_channels*(S, C_cav, Na_i, Ca_i, E_Na, p)
 
   %Sodium Background
   I_Nab = p.G_Nab*(V - E_Na);
+
+  %Ca-activated Cl current
+  O_ClCa = 0.2/(1 + e^(-(V-46.7)/7.8));
+  I_ClCa = p.G_ClCa*O_ClCa*(Ca_i/(Ca_i + p.Km_Cl))*(V-p.E_Cl);
+
+  %Package output
+  dS = [df_cav_PLMp; I_NaK; I_pCa; I_NaCa; I_Cab; I_Nab; I_ClCa];
 
 endfunction

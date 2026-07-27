@@ -68,7 +68,7 @@ p.G_Ks = 0.00575;     %mS/uF
 p.G_Kr = 0.078;       %mS/uF
 p.k_f = 23.761;       %1/s
 p.k_b = 36.778;       %1/s
-p.GG_ClCa = 10.0;     %mS/uF
+p.G_ClCa = 10.0;      %mS/uF
 p.Km_Cl = 10.0;       %uM
 p.E_Cl = -40;         %mV
 
