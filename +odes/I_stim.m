@@ -2,33 +2,8 @@ function I = I_stim(t, p)
   if strcmp(p.protocol, "none")
     I = 0;
 
-  elseif strcmp(p.protocol, "spike")
-    if (t >= p.stim_start) && (t < p.stim_start+p.stim_dur)
-      I = p.stim_amp;
-    elseif (t >= p.stim_2nd_start) && (t < p.stim_2nd_start+p.stim_dur) && (p.stim_2nd_start != 0)
-      I = p.stim_amp;
-    else
-      I = 0;
-    end
-
   elseif strcmp(p.protocol, "spike_smooth")
     I = odes.pulse(t, p.stim_start, p.stim_dur, p.stim_amp, p.stim_k);
-
-  elseif strcmp(p.protocol, "train")
-    t_diff = t - p.stim_start;
-
-    if (t_diff > 0)
-      I = 0;
-      return
-    end
-
-    t_in_cycle = mod(t_diff, p.stim_period);
-
-    if (t_in_cycle < p.stim_dur)
-      I = p.stim_amp;
-    else
-      I = 0;
-    end
 
   elseif strcmp(p.protocol, "train_smooth")
 

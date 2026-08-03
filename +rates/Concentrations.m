@@ -26,13 +26,13 @@ function dC = Concentrations(Ca, J, I, p)
   I_Nab = I(13);
   I_ClCa = I(14);
 
-  I_Kto_s = 0;  %These are not in the model, maybe a copy-paste mistake.
+  I_Kto_s = 0;  %These are not in the model. Likely they are assumed to be 0.
   I_Ks = 0;
 
   %Calcium
-  B_i = inv(1 + p.CMDN_tot*p.Km_CMDN/(p.Km_CMDN+Ca_i)^2);
-  B_ss = inv(1 + p.CMDN_tot*p.Km_CMDN/(p.Km_CMDN+Ca_ss)^2);
-  B_JSR = inv(1 + p.CSQN_tot*p.Km_CSQN/(p.Km_CSQN+Ca_JSR)^2);
+  B_i = 1/(1 + p.CMDN_tot*p.Km_CMDN/(p.Km_CMDN+Ca_i)^2);
+  B_ss = 1/(1 + p.CMDN_tot*p.Km_CMDN/(p.Km_CMDN+Ca_ss)^2);
+  B_JSR = 1/(1 + p.CSQN_tot*p.Km_CSQN/(p.Km_CSQN+Ca_JSR)^2);
 
   dCa_i = B_i*(J_leak + J_xfer - J_up - J_trpn - (I_Cab - 2*I_NaCa + I_pCa...
                 + I_cav_CaL)*(p.A_cap*p.C_m/(2*p.V_cyt*p.F)));

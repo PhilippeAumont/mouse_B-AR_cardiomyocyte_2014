@@ -183,7 +183,7 @@ X0 = [
 0.999983,       %i_to_fp
 0.186637,       %f_cyt_PLB_p
 0.364102,       %f_cyt_Tnl_p
-0.799452e-3,    %R_cav_PKA
+0.799452e-3,    %R_cav_PKA    %
 0.626341e-27,   %R_cav_GRK2
 0.132189e-2,    %Gs_cav_aGTP
 0.180824e-2,    %Gs_cav_By
@@ -198,7 +198,7 @@ X0 = [
 0.331511e-3,    %Gs_cyt_aGTP
 0.663570e-3,    %Gs_cyt_By
 0.333058e-3,    %Gs_cyt_aGDP
-0.000000,       %cAMP_cav_AC56
+0.000000,       %cAMP_cav_AC56 %
 0.000000,       %cAMP_ecav_AC47
 0.000000,       %cAMP_cyt_AC56
 0.000000,       %cAMP_cyt_AC47
@@ -222,7 +222,7 @@ X0 = [
 0.459397e-2,    %C_cav
 0.823499,       %PKIC_cav
 6.74029,        %cAMP_ecav_PKA
-0.653988,       %ARC_ecav
+0.653988,       %ARC_ecav%
 0.132861,       %A2RC_ecav
 1.17000,        %A2R_ecav
 0.147623,       %C_ecav
@@ -245,54 +245,6 @@ S_Na_0,
 S_IKr_0
 ];
 
-% Below needs update
-state_vector_labels = [
-"Membrane potential [mV]",
-"Myoplasmic calcium [uM]",
-"Subspace calcium [uM]",
-"JSR calcium [uM]",
-"NSR calcium [uM]",
-"Calcium-bound low affinity troponin [uM]",
-"Calcium=bound high affinity troponin [uM]",
-"RyR modulation factor",
-"Myoplasmic sodium [uM]",
-"Myoplasmic potassium [uM]",
-"Gating variable a - I_Kto,f",
-"Gating variable i - I_Kto,f",
-"Gating variable n - I_Ks",
-"Gating variable a - I_Kto,s",
-"Gating variable i - I_Kto,s",
-"Gating variable a - I_Kur",
-"Gating variable i - I_Kur",
-"Gating variable a - I_Kss",
-"Gating variable i - I_Kss",
-"LCC MSM - O",
-"LCC MSM - C1",
-"LCC MSM - C2",
-"LCC MSM - C3",
-"LCC MSM - C4",
-"LCC MSM - I1",
-"LCC MSM - I2",
-"LCC MSM - I3",
-"RyR MSM - O1",
-"RyR MSM - O2",
-"RyR MSM - C1",
-"RyR MSM - C2",
-"Na MSM - O",
-"Na MSM - C1",
-"Na MSM - C2",
-"Na MSM - C3",
-"Na MSM - IF",
-"Na MSM - I1",
-"Na MSM - I2",
-"Na MSM - IC2",
-"Na MSM - IC3",
-"IKr MSM - O",
-"IKr MSM - C1",
-"IKr MSM - C2",
-"IKr MSM - C3",
-"IKr MSM - I"
-];
 
 %Stimulation protocols:
 p.protocol = "none";
@@ -300,10 +252,8 @@ p.L = 0;      %B_AR ligand concentration [uM]
 p.IBMX = 0;   %PDE inhibitor concentration [uM]
 
 % none: No stimulation
-% spike: single stim spike. Needed: start, dur, amp
 % spike_smooth: sigmoidal spike. Needed: start, dur, amp, k
 % two_spikes_smooth: two single spikes. Needed: start, 2nd_start, dur, amp, k
-% train: regular spikes. Needed: start, period, dur, amp
 % train_smooth: regular smoothed spikes. Needed: start, period, dur, amp, k
 %
 %
@@ -312,18 +262,32 @@ p.IBMX = 0;   %PDE inhibitor concentration [uM]
 % Warning: Very short smoothed spikes may not reach full amplitude
 % Warning: protocol misspell leads to "value on the right hand side of assignment is undefined".
 
-p.stim_start = 100;
+p.stim_start = 30;
 p.stim_2nd_start = 130;
 p.stim_period = 25;
-p.stim_dur = 0.5;
-p.stim_amp = -80;
-p.stim_k = 5000;
+p.stim_dur = 1;
+p.stim_amp = 80;
+p.stim_k = 20000;
 
 %Solver
-tspan = 0:0.1:100.0; %THIS MODEL USES S AND NOT MS FOR TIME UNITS
-options = odeset('RelTol', 1e-6, 'AbsTol', 1e-9, 'MaxStep', 1e-2);
-%[t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);
-odes.odes(0,X0,p);
+tspan = 0:0.0001:2.5;
+
+abstol_vect = 1e-4*ones(1,145);
+%abstol_vect = 1e-4*ones(1,145); abstol_vect(79:145) = 1e-4; abstol_vect(78) = 1e-12;
+options = odeset('RelTol', 1e-3, 'AbsTol', abstol_vect, "NonNegative", 2:145, "MaxStep", 0.0001);
+
+options = odeset(options, "OutputFcn", @odeplot, "OutputSel", [2,3,4]);
+[t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);
+%dx = odes.odes(0,X0,p);
+
+%Calculate and save the Currents and Fluxes at each timepoint
+I_all = zeros(size(t)(1), 14); J_all = zeros(size(t)(1), 6);
+for k = 1:length(t)
+    [~, I_k, J_k] = odes.odes(t(k), X(k,:).', p);
+    I_all(k,:) = I_k(:).';
+    J_all(k,:) = J_k(:).';
+end
+
 
 %Plotting
 %plotting.line_plot(t, X(:,1));     %a:b, includes a but not b

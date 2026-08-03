@@ -1,4 +1,4 @@
-function dxdt = odes(t, X, p)
+function [dxdt, I, J] = odes(t, X, p)
 
   %Unpack state vector X
   V = X(1);
@@ -193,6 +193,9 @@ function dxdt = odes(t, X, p)
 
   dP_RyR = -0.04*P_RyR - 0.01*(I_ecav_CaL/7.0)*e^-((V+5.0)^2/648.0);
 
+  %Stimulation Protocol
+  I_stim = odes.I_stim(t,p);
+
   %Concentration changes and buffers
   Ca = [Ca_i; Ca_ss; Ca_JSR; Ca_NSR];
   J = [J_rel; J_tr; J_xfer; J_leak; J_up; J_trpn];
@@ -200,7 +203,6 @@ function dxdt = odes(t, X, p)
   dC = rates.Concentrations(Ca, J, I, p);
 
   %membrane potential
-  I_stim = 0;
   dV = -(I_CaL + I_pCa + I_NaCa + I_Cab + I_Na + I_Nab + I_NaK + I_Kto_f...
         + I_K1 + I_Kur + I_Kss + I_Kr + I_ClCa - I_stim)/p.C_m;
 

@@ -52,9 +52,7 @@ function dS_RyR = RyR(S, Ca_ss, C_ecav, p)
   c2_c2p = f_RyR*P(c2);
   c2p_c2 = f_RyR*k_on_a*k_off_ap*k_on_c*k_off_cp/(k_on_ap*k_off_a*k_on_cp*k_off_c)*DP(c2p);
 
-
   %Prepare MSM Transition matrix rows
-
   O1 =  [-(k_on_b*Ca_ss^m+k_on_c+o1_o1p+k_off_a),k_off_b,k_on_a*Ca_ss^n,k_off_c,o1p_o1,0,0,0];
   O2 =  [k_on_b*Ca_ss^m,-(o2_o2p+k_off_b),0,0,0,o2p_o2,0,0];
   C1 =  [k_off_a,0,-(k_on_a*Ca_ss^n+c1_c1p),0,0,0,c1p_c1,0];
@@ -67,7 +65,7 @@ function dS_RyR = RyR(S, Ca_ss, C_ecav, p)
 
   %Assemble Rows
   Q = [O1;O2;C1;C2;
-        O1p;O2p;C1p;C2p];
+       O1p;O2p;C1p;C2p];
 
   %Calculate new states
   dS_RyR = Q*S;
