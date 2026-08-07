@@ -13,7 +13,7 @@ function dS = Tn1(S, Ca_i, C_cyt)
   k_off_ltrpn_np = 19.6;
   k_off_ltrpn_p = 29.4;
   k_Tn1_PKA = 0.0247254;
-  K_Tn1_PKA = 2.71430;
+  K_Tn1_PKA = 2.71430e-5;
   k_Tn1_PP2A = 0.0865898;
   K_Tn1_PP2A = 0.801420;
 

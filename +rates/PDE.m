@@ -34,7 +34,7 @@ function dPDE = PDE(S, C, cAMP, p)
   r_part_PDE23 = 0.570;
   r_part_PDE34 = 0.748;
   PDE2_tot = 0.034610;
-  PDE3_tot = 0.10346;
+  PDE3_tot = 0.010346;
   PDE4_tot = 0.026687;
   f_cav_PDE2 = 0.06608;
   f_ecav_PDE2 = 2*f_cav_PDE2;
@@ -82,7 +82,7 @@ function dPDE = PDE(S, C, cAMP, p)
   %Extracaveolae (ecav)
   dPDE4_ecav_p = kf_PDEp*C_ecav*(PDE4_ecav-PDE4_ecav_p) - kb_PDEp*PDE4_ecav_p;
   dcAMP_ecav_PDE2 = k_PDE2*PDE2_ecav*cAMP_ecav/(K_m_PDE2+cAMP_ecav);
-  dcAMP_ecav_PDE4 = (k_PDE4*(PDE4_ecav-PDE4_ecav_p)*cAMP_cav + d_k_PDE34*k_PDE4*PDE4_ecav_p*cAMP_ecav)...
+  dcAMP_ecav_PDE4 = (k_PDE4*(PDE4_ecav-PDE4_ecav_p)*cAMP_ecav + d_k_PDE34*k_PDE4*PDE4_ecav_p*cAMP_ecav)...
                     /(K_m_PDE4+cAMP_ecav);
 
   %Cytosol (cyt)

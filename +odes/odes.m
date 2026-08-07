@@ -151,7 +151,7 @@ function [dxdt, I, J] = odes(t, X, p)
   %Others
   %PLB
   S_PLB = [f_cyt_PLB_p; PP1_cyt_f];
-  dPLB = rates.PP(S_PLB, C(3));
+  dPLB = rates.PLB(S_PLB, C(3));
   Km_up = dPLB(1);
   df_cyt_PLB_p = dPLB(2);
 
@@ -191,7 +191,7 @@ function [dxdt, I, J] = odes(t, X, p)
   J_trpn = 2.37*Ca_i*(140.0-HTRPNCa) - 0.032*HTRPNCa + 32.7*Ca_i*(70.0 - LTRPNCa)...
           - k_off_ltrpn*LTRPNCa;  %Params from Tn1 module
 
-  dP_RyR = -0.04*P_RyR - 0.01*(I_ecav_CaL/7.0)*e^-((V+5.0)^2/648.0);
+  dP_RyR = -0.04*P_RyR - 0.1*(I_ecav_CaL/7.0)*e^-((V+5.0)^2/648.0);
 
   %Stimulation Protocol
   I_stim = odes.I_stim(t,p);
@@ -199,12 +199,12 @@ function [dxdt, I, J] = odes(t, X, p)
   %Concentration changes and buffers
   Ca = [Ca_i; Ca_ss; Ca_JSR; Ca_NSR];
   J = [J_rel; J_tr; J_xfer; J_leak; J_up; J_trpn];
-  I = [I_cav_CaL; I_ecav_CaL; I_Na; I_Kr; I_Kur; I_Kto_f; I_K1; I_Kss; I_NaK; I_pCa; I_NaCa; I_Cab; I_Nab; I_ClCa];
+  I = [I_cav_CaL; I_ecav_CaL; I_Na; I_Kr; I_Kur; I_Kto_f; I_K1; I_Kss; I_NaK; I_pCa; I_NaCa; I_Cab; I_Nab; I_ClCa; I_stim];
   dC = rates.Concentrations(Ca, J, I, p);
 
   %membrane potential
   dV = -(I_CaL + I_pCa + I_NaCa + I_Cab + I_Na + I_Nab + I_NaK + I_Kto_f...
-        + I_K1 + I_Kur + I_Kss + I_Kr + I_ClCa - I_stim)/p.C_m;
+        + I_K1 + I_Kur + I_Kss + I_Kr + I_ClCa + I_stim)/p.C_m;
 
   %Pack output
   dxdt = [
@@ -213,7 +213,7 @@ function [dxdt, I, J] = odes(t, X, p)
   dLTRPNCa; dHTRPNCa;
   dC(5:6);
   dS_K(5:9);
-  f_cav_PLM_p;
+  df_cav_PLM_p;
   dS_K(10:15);
   df_cyt_PLB_p; df_cyt_Tn1_p;
   dB_AR;

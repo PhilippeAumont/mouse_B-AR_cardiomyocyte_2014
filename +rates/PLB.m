@@ -7,7 +7,7 @@ function dS = PLB(S, C_cyt)
   Km_up_np = 0.41;
   Km_up_p = 0.31;
   k_PLB_PKA = 0.108917;
-  K_PLB_PKA = 4.90970;
+  K_PLB_PKA = 4.90970e-4;
   k_PLB_PP1 = 4.41956e-2;
   K_PLB_PP1 = 1.69376e-2;
 

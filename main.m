@@ -23,13 +23,13 @@ Units
 % %Cell Parameters
 
 p.A_cap = 1.534e-4;   %cm2
-p.V_cell = 38.00e-4;  %uL
+p.V_cell = 38.00e-6;  %uL
 p.V_cyt = 25.84e-6;   %uL
 p.V_JSR = 0.12e-6;    %uL
 p.V_NSR = 2.098e-6;   %uL
 p.V_ss = 1.485e-9;    %uL
-p.V_cav = 7.600e-05;  %uL (2% of cell volume)
-p.V_ecav = 1.520e-04; %uL (4% of cell volume)
+p.V_cav = 7.600e-07;  %uL (2% of cell volume)
+p.V_ecav = 1.520e-06; %uL (4% of cell volume)
 
 % %Extracellular Ion concentrations
 p.K_o = 5400;    %uM
@@ -60,7 +60,7 @@ p.Km_Ca = 1380;       %uM
 p.k_sat = 0.27;
 p.n = 0.35;
 p.I_max_pCa = 0.051;
-p.Km_pCa = 0.5;       %uM
+p.Km_pCa = 0.5;        %uM
 p.G_Cab = 0.000284;   %mS/uF
 p.G_Nab = 0.0063;     %mS/uF
 p.G_Kss = 0.0611;     %mS/uF
@@ -77,7 +77,7 @@ p.E_Cl = -40;         %mV
 %Initial Markov State conditions
 S_LCC_cav_0 = [
 0.320206e-11,   %O
-0.973685,       %C1
+0.973685,        %C1
 0.524483e-2,    %C2
 0.105944e-4,    %C3
 0.951124e-8,    %C4
@@ -92,7 +92,7 @@ S_LCC_cav_0 = [
 0.110051e-7,    %C4-p
 0.140555e-10,   %Cp-p
 0.541817e-10,   %I1-p
-0.100783e-6,    %I2-p
+0.100683e-6,    %I2-p
 0.970287e-7     %I3-p
 ];
 
@@ -217,12 +217,12 @@ X0 = [
 0.000000,       %cAMP_cyt_PDE4
 7.92317,        %cAMP_cav_PKA
 0.299288,       %ARC_cav
-0.303358,       %A2RC_cav
+0.303358e-1,       %A2RC_cav
 0.858440,       %A2R_cav
-0.459397e-2,    %C_cav
+0.459397e-1,    %C_cav
 0.823499,       %PKIC_cav
 6.74029,        %cAMP_ecav_PKA
-0.653988,       %ARC_ecav%
+0.653988,       %ARC_ecav
 0.132861,       %A2RC_ecav
 1.17000,        %A2R_ecav
 0.147623,       %C_ecav
@@ -247,8 +247,8 @@ S_IKr_0
 
 
 %Stimulation protocols:
-p.protocol = "none";
-p.L = 0;      %B_AR ligand concentration [uM]
+p.protocol = "spike_smooth";
+p.L = 0.1;      %B_AR ligand concentration [uM]
 p.IBMX = 0;   %PDE inhibitor concentration [uM]
 
 % none: No stimulation
@@ -262,26 +262,26 @@ p.IBMX = 0;   %PDE inhibitor concentration [uM]
 % Warning: Very short smoothed spikes may not reach full amplitude
 % Warning: protocol misspell leads to "value on the right hand side of assignment is undefined".
 
-p.stim_start = 30;
+p.stim_start = 0.5;
 p.stim_2nd_start = 130;
-p.stim_period = 25;
-p.stim_dur = 1;
-p.stim_amp = 80;
-p.stim_k = 20000;
+p.stim_period = 0.2;
+p.stim_dur = 0.001;
+p.stim_amp = -80;
+p.stim_k = 50000;
 
 %Solver
-tspan = 0:0.0001:2.5;
+tspan = 0:0.0001:1.5;
 
-abstol_vect = 1e-4*ones(1,145);
-%abstol_vect = 1e-4*ones(1,145); abstol_vect(79:145) = 1e-4; abstol_vect(78) = 1e-12;
-options = odeset('RelTol', 1e-3, 'AbsTol', abstol_vect, "NonNegative", 2:145, "MaxStep", 0.0001);
+abstol_vect = 1e-9*ones(1,145);
+abstol_vect = 1e-9*ones(1,145); abstol_vect(79:145) = 1e-12; abstol_vect(78) = 1e-12;
+options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect, "NonNegative", 2:145, "MaxStep", 0.00001);
 
-options = odeset(options, "OutputFcn", @odeplot, "OutputSel", [2,3,4]);
+options = odeset(options, "OutputFcn", @odeplot, "OutputSel", [1]);
 [t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);
 %dx = odes.odes(0,X0,p);
 
 %Calculate and save the Currents and Fluxes at each timepoint
-I_all = zeros(size(t)(1), 14); J_all = zeros(size(t)(1), 6);
+I_all = zeros(size(t)(1), 15); J_all = zeros(size(t)(1), 6);
 for k = 1:length(t)
     [~, I_k, J_k] = odes.odes(t(k), X(k,:).', p);
     I_all(k,:) = I_k(:).';
