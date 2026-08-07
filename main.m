@@ -11,7 +11,7 @@ B1-Adrenergic Signaling System in Mouse Ventricular Myocytes. PLoS
 ONE 9(2): e89113. https://doi.org/10.1371/journal.pone.0089113
 
 Units
-- Time: s
+- Time: s (but the simulation is run over ms)
 - Concentration: uM
 - Volume: uL
 - Voltage: mV
@@ -248,7 +248,7 @@ S_IKr_0
 
 %Stimulation protocols:
 p.protocol = "spike_smooth";
-p.L = 0.1;      %B_AR ligand concentration [uM]
+p.L = 0;      %B_AR ligand concentration [uM]
 p.IBMX = 0;   %PDE inhibitor concentration [uM]
 
 % none: No stimulation
@@ -262,19 +262,19 @@ p.IBMX = 0;   %PDE inhibitor concentration [uM]
 % Warning: Very short smoothed spikes may not reach full amplitude
 % Warning: protocol misspell leads to "value on the right hand side of assignment is undefined".
 
-p.stim_start = 0.5;
+p.stim_start = 200;
 p.stim_2nd_start = 130;
 p.stim_period = 0.2;
-p.stim_dur = 0.001;
+p.stim_dur = 1;
 p.stim_amp = -80;
-p.stim_k = 50000;
+p.stim_k = 100000;
 
 %Solver
-tspan = 0:0.0001:1.5;
+tspan = 0:0.1:500;
 
 abstol_vect = 1e-9*ones(1,145);
 abstol_vect = 1e-9*ones(1,145); abstol_vect(79:145) = 1e-12; abstol_vect(78) = 1e-12;
-options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect, "NonNegative", 2:145, "MaxStep", 0.00001);
+options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect, "NonNegative", 2:145, "MaxStep", 0.01);
 
 options = odeset(options, "OutputFcn", @odeplot, "OutputSel", [1]);
 [t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);
