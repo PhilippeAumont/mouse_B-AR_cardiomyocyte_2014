@@ -1,13 +1,13 @@
 function dS = Misc_channels(C_cav, V, Na_i, Ca_i, E_Na, f_cav_PLM_p, p)
   %Na-K pump and Phospholemman (PLM)
   % Parameters
-  I_max_NaK = 4.0;
-  Km_Nai_np = 18800;
-  Km_Nai_p = 13600;
-  Km_Ko = 1500;
-  k_PLM_PKA = 3.053e-3;
+  I_max_NaK = 4.0;           %pA/pF
+  Km_Nai_np = 18800;        %uM
+  Km_Nai_p = 13600;         %uM
+  Km_Ko = 1500;             %uM
+  k_PLM_PKA = 3.053e-6;    %1/uM ms
   K_PLM_PKA = 0.0011001;
-  k_PLM_PP = 1.8491e-2;
+  k_PLM_PP = 1.8491e-5;   %1/uM ms
   K_PLM_PP = 5.7392;
 
   PP_cav = 0.2;
@@ -21,7 +21,6 @@ function dS = Misc_channels(C_cav, V, Na_i, Ca_i, E_Na, f_cav_PLM_p, p)
   Km_Nai = Km_Nai_np*(1-f_cav_PLM_p) + Km_Nai_p*f_cav_PLM_p;
 
   I_NaK = I_max_NaK*f_NaK*inv(1+(Km_Nai/Na_i)^3)*p.K_o/(p.K_o+Km_Ko);
-
 
   %Calcium pump
   I_pCa = p.I_max_pCa*Ca_i^2/(p.Km_pCa^2 + Ca_i^2);

@@ -14,13 +14,13 @@ function dS = K_channels(S, C_ecav, V, K_i, p)
 
   a_Kss = S(11);
 
-  %Ultra-rapidly activating delayed rectifier K channel
+  %Ultra-rapidly activating delayed rectifier K channel - Kur
   % Parameters
-  G_Kur = 0.3424;
-  G_Kurp = 0.53307;
-  k_IKur_PKA = 6.9537e-3;
+  G_Kur = 0.3424;                %pA/pF
+  G_Kurp = 0.53307;              %pA/pF
+  k_IKur_PKA = 6.9537e-6;       %1/uM ms
   K_IKur_PKA = 0.138115;
-  k_IKur_PP = 3.170e-2;
+  k_IKur_PP = 3.170e-5;         %1/uM ms
   K_IKur_PP = 0.23310;
 
   PP1_ecav = 0.1;
@@ -42,13 +42,13 @@ function dS = K_channels(S, C_ecav, V, K_i, p)
   da_urp = (a_ss - a_urp)/t_aur;
   di_urp = (i_ss - i_urp)/t_iur;
 
-  %Rapidly inactivating transient outward K channel
+  %Rapidly inactivating transient outward K channel - Kto_f
   % Parameters
-  G_Kto_f = 0.3846;
-  G_Kto_fp = G_Kto_f;
-  k_IKto_PKA = 4.38983e-2;
+  G_Kto_f = 0.3846;          %pA/pF
+  G_Kto_fp = G_Kto_f;          %pA/pF
+  k_IKto_PKA = 4.38983e-5;  %1/uM ms
   K_IKto_PKA = 0.27623;
-  k_IKto_PP = 9.09678e-2;
+  k_IKto_PP = 9.09678e-5;   %1/uM ms
   K_IKto_PP = 0.23310;
 
   %Calculations
@@ -72,19 +72,18 @@ function dS = K_channels(S, C_ecav, V, K_i, p)
   da_to_fp = a_ap*(1-a_to_fp) - B_ap*a_to_fp;
   di_to_fp = a_ip*(1-i_to_fp) - B_ip*i_to_fp;
 
-  %Time-independent K channel
+  %Other Channels
+  %Time-independent K channel - K1
   a_K1 = 1.02/(1 + exp(0.2385*(V - E_K - 59.215)));
   B_K1 = (0.8*exp(0.08032*(V-E_K+5.476)) + exp(0.06175*(V-E_K-594.31)))...
           / (1 + exp(-0.5143*(V-E_K+4.753)));
 
   I_K1 = 0.27*sqrt(p.K_o/5400)*(a_K1/(a_K1 + B_K1))*(V-E_K);
 
-
-  %Kss
+  %Noninactivating Steady-State Voltage activated K current - Kss
   I_Kss = p.G_Kss*a_Kss*(V-E_K);
   t_Kss = 1235.5/(e^(0.0862*(V+40.0)) + e^(-0.0862*(V+40.0))) + 13.17;
   da_Kss = (a_ss-a_Kss)/t_Kss;
-
 
   %Pack output
   dS = [

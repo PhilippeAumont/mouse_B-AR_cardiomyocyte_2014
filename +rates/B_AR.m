@@ -33,14 +33,14 @@ function dB_AR = B_AR(S, C, p)
   K_B1_L = 0.567;                    %uM
   K_B1_H = 0.0617;                   %uM
   K_B1_C = 2.86;                     %uM
-  k_PKA_on = 0.00081;
-  k_PKA_off = 0.0002025;              %1/s
-  k_GRK2_on = 0.000243;              %1/s
-  k_GRK2_off = k_PKA_off;              %1/s
-  k_act1_Gs = 4.9;                   %1/s
-  k_act2_Gs = 0.26;                  %1/s
-  k_hyd_Gs = 0.8;                    %1/s
-  k_reas_Gs = 1200;                  %1/uM s
+  k_PKA_on = 8.1e-07;               %1/uM ms
+  k_PKA_off = 2.025e-07;             %1/ms
+  k_GRK2_on = 2.43e-07;             %1/ms
+  k_GRK2_off = k_PKA_off;               %1/ms
+  k_act1_Gs = 4.9e-3;                %1/ms
+  k_act2_Gs = 2.6e-4;               %1/ms
+  k_hyd_Gs = 8.0e-04;               %1/ms
+  k_reas_Gs = 1.2;                   %1/uM ms
 
   %Concentrations
   %Caveolae (cav)

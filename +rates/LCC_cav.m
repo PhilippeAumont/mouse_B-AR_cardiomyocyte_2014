@@ -19,23 +19,22 @@ function dS_LCC = LCC_cav(S, C_cav, Ca, V, p)
   i2p = S(17);
   i3p = S(18);
 
-
   %Parameters
   f_cav_ICaL = 0.2;
   I_CaL_tot = 0.0273;         %uM
-  K_pc_max = 233.24;          %1/s
+  K_pc_max = 0.23324;          %1/ms
   K_pc_half = 10.0;           %uM
-  K_pcf = 40000;              %1/s
-  K_pcb = 2.4;                %1/s
-  k_co = 1000;                %1/s
-  k_cop = 4000;               %1/s
-  k_oc = 1000;                %1/s
-  k_ICaL_PKA = 1.74e-2;       %1/s
-  K_ICaL_PKA = 0.5;           %uM
-  k_ICaL_PP = 2.325e-4;       %1/s
-  K_ICaL_PP = 0.2;            %uM
+  K_pcf = 40;                  %1/ms
+  K_pcb = 2.4e-3;             %1/ms
+  k_co = 1;                     %1/ms
+  k_cop = 4;                    %1/ms
+  k_oc = 1;                     %1/ms
+  k_ICaL_PKA = 1.74e-5;       %1/ms
+  K_ICaL_PKA = 0.5;            %uM
+  k_ICaL_PP = 2.325e-7;      %1/ms
+  K_ICaL_PP = 0.2;             %uM
 
-  PP = 0.2;                   %uM , CTE from PP and Inhbitor 1 module
+  PP = 0.2;                    %uM , Constant from PP and Inhbitor 1 module
 
   %Calculations
   a = 0.4*e^((V+15.0)/15.0);
@@ -44,6 +43,7 @@ function dS_LCC = LCC_cav(S, C_cav, Ca, V, p)
   I_CaL_cav_tot = f_cav_ICaL*I_CaL_tot*p.V_cell/p.V_cav;
   y = K_pc_max*Ca/(K_pc_half+Ca);
 
+  %Function for phosphorylation and dephosphorylation
   function k = P(S)
     k = k_ICaL_PKA*C_cav/(K_ICaL_PKA+I_CaL_cav_tot*S);
   end
@@ -51,6 +51,7 @@ function dS_LCC = LCC_cav(S, C_cav, Ca, V, p)
     k = k_ICaL_PP*PP/(K_ICaL_PP+I_CaL_cav_tot*S);
   end
 
+  %Precalculate phospho/dephospho rates
   c1_c1p = P(c1);
   c1p_c1 = DP(c1p)*ap^3*k_cop/(a^3*k_co);
   c2_c2p = P(c2);
@@ -71,7 +72,6 @@ function dS_LCC = LCC_cav(S, C_cav, Ca, V, p)
   i3p_i3 = DP(i3p);
 
   %Prepare MSM Transition matrix rows
-
   O =   [-(k_oc+y+0.001*K_pcf+o_op),0,0,0,0,k_co,K_pcb,0.001*a,0,op_o,0,0,0,0,0,0,0,0];
   C1 =  [0,-(4*a+c1_c1p),B,0,0,0,0,0,0,0,c1p_c1,0,0,0,0,0,0,0];
   C2 =  [0,4*a,-(B+3*a+c2_c2p),2*B,0,0,0,0,0,0,0,c2p_c2,0,0,0,0,0,0];
@@ -90,7 +90,6 @@ function dS_LCC = LCC_cav(S, C_cav, Ca, V, p)
   I1p = [0,0,0,0,0,0,i1_i1p,0,0,y,0,0,0,0.01*ap*y*k_cop/k_oc,0,-(i1p_i1+0.001*K_pcf+K_pcb+0.04*B*K_pcb),0,0.001*ap];
   I2p = [0,0,0,0,0,0,0,i2_i2p,0,0.001*K_pcf,0,0,0,0.002*K_pcf*k_cop/k_oc,0,0,-(i2p_i2+0.001*ap+y+0.008*B),K_pcb];
   I3p = [0,0,0,0,0,0,0,0,i3_i3p,0,0,0,0,y*K_pcf*k_cop/k_oc,0,0.001*K_pcf,y,-(4*B*K_pcb+i3p_i3+K_pcb+0.001*ap)];
-
 
   %Assemble Rows
   Q = [O;C1;C2;C3;C4;Cp;I1;I2;I3;

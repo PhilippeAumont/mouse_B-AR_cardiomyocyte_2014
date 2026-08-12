@@ -10,32 +10,33 @@ function dS_RyR = RyR(S, Ca_ss, C_ecav, p)
   c2p = S(8);
 
   %Parameters
-  RyR_tot = 0.1993;     %uM
+  RyR_tot = 0.1993;        %uM
   n = 4;
   m = 3;
-  k_on_a = 6.075;       %1/uM^4 s
-  k_off_a = 71.25;       %1/s
-  k_on_b = 4.05;        %1/uM^3 s
-  k_off_b = 965.0;       %1/s
-  k_on_c = 9.0;         %1/s
-  k_off_c = 0.8;         %1/s
-  k_on_ap = 5*k_on_a;   %1/uM^4 s
-  k_off_ap = 3*k_off_a;   %1/s
-  k_on_bp = 5*k_on_b;   %1/uM^3 s
-  k_off_bp = 3*k_off_b;   %1/s
-  k_on_cp = 50*k_on_c;  %1/s
-  k_off_cp = 30*k_off_c;  %1/s
+  k_on_a = 6.075e-3;       %1/uM^4 ms
+  k_off_a = 0.07125;        %1/s
+  k_on_b = 4.05e-3;        %1/uM^3 ms
+  k_off_b = 0.9650;         %1/ms
+  k_on_c = 9.0e-3;         %1/ms
+  k_off_c = 8e-4;            %1/ms
+  k_on_ap = 5*k_on_a;        %1/uM^4 ms
+  k_off_ap = 3*k_off_a;        %1/ms
+  k_on_bp = 5*k_on_b;        %1/uM^3 ms
+  k_off_bp = 3*k_off_b;        %1/ms
+  k_on_cp = 50*k_on_c;       %1/ms
+  k_off_cp = 30*k_off_c;       %1/ms
   f_RyR = 0.001;
-  k_RyR_PKA = 5.775e-2; %1/uM s
-  k_RyR_PP = 0.28875;   %1/uM s
-  K_RyR_PKA = 0.5;      %uM
-  K_RyR_PP = 0.05;      %uM
+  k_RyR_PKA = 5.775e-5;    %1/uM ms
+  k_RyR_PP = 2.8875e-04;  %1/uM ms
+  K_RyR_PKA = 0.5;           %uM
+  K_RyR_PP = 0.05;          %uM
 
-  PP1_ecav = 0.1;       %uM
+  PP1_ecav = 0.1;           %uM
 
   %Calculations
   RyR_ecav = RyR_tot*p.V_cell/p.V_ecav;
 
+  %Functions for phosphorylation and dephosphorylation
   function x = P(S);
     x = k_RyR_PKA*C_ecav/(K_RyR_PKA+RyR_ecav*S);
   end
@@ -43,6 +44,7 @@ function dS_RyR = RyR(S, Ca_ss, C_ecav, p)
     x = k_RyR_PP*PP1_ecav/(K_RyR_PP+RyR_ecav*S);
   end
 
+  %Precalculate phosphorylation and dephosphorylation
   o1_o1p = f_RyR*P(o1);
   o1p_o1 = f_RyR*k_on_a*k_off_ap/(k_on_ap*k_off_a)*DP(o1p);
   o2_o2p = f_RyR*P(o2);
@@ -61,7 +63,6 @@ function dS_RyR = RyR(S, Ca_ss, C_ecav, p)
   O2p = [0,o2_o2p,0,0,k_on_bp*Ca_ss^m,-(o2p_o2+k_off_bp),0,0];
   C1p = [0,0,c1_c1p,0,k_off_ap,0,-(c1p_c1+k_on_ap*Ca_ss^n),0];
   C2p = [0,0,0,c2_c2p,k_on_cp,0,0,-(c2p_c2+k_off_cp)];
-
 
   %Assemble Rows
   Q = [O1;O2;C1;C2;

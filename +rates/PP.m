@@ -1,20 +1,19 @@
-function dPP = PP(S, C)
+function dPP = PP(S, C_cyt)
   %Unpack state vectorize
   Inhib1_cyt_p_tot = S(1);
-  C_cyt = C;
 
   %Parameters
-  PP1_cyt = 0.2;          %uM
-  PP2A_cyt = 0.0607843;   %uM
-  PP1_cav = 0.1;          %uM
-  PP2A_cav = 0.1;         %uM
-  PP_cav = 0.2;           %uM
-  PP1_ecav = 0.1;         %uM
+  PP1_cyt = 0.2;           %uM
+  PP2A_cyt = 0.0607843;  %uM
+  PP1_cav = 0.1;           %uM
+  PP2A_cav = 0.1;          %uM
+  PP_cav = 0.2;            %uM
+  PP1_ecav = 0.1;          %uM
   Inhib1_cyt = 0.08543;   %uM
   K_inh1 = 1.0e-3;        %uM
-  k_PKA_inh1 = 1080.0;    %1/uM s
-  Km_PKA_inh1 = 1.5;      %uM
-  k_PP2A_inh1 = 50.67;    %1/uM s
+  k_PKA_inh1 = 1.0800;    %1/uM ms
+  Km_PKA_inh1 = 1.5;       %uM
+  k_PP2A_inh1 = 0.050670; %1/uM ms
   Km_PP2A_inh1 = 1.0e-3;  %uM
 
   %Concentrations and calculations

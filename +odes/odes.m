@@ -188,12 +188,12 @@ function [dxdt, I, J] = odes(t, X, p)
   J_xfer = (Ca_ss - Ca_i)/p.t_xfer;
   J_leak = p.v2*(Ca_NSR - Ca_i);
   J_up = p.v3*Ca_i^2/(Km_up^2 + Ca_i^2);
-  J_trpn = 2.37*Ca_i*(140.0-HTRPNCa) - 0.032*HTRPNCa + 32.7*Ca_i*(70.0 - LTRPNCa)...
+  J_trpn = 2.37e-3*Ca_i*(140.0-HTRPNCa) - 3.2e-5*HTRPNCa + 0.0327*Ca_i*(70.0 - LTRPNCa)...
           - k_off_ltrpn*LTRPNCa;  %Params from Tn1 module
 
-  dP_RyR = -0.04*P_RyR - 0.1*(I_ecav_CaL/7.0)*e^-((V+5.0)^2/648.0);
+  dP_RyR = -4e-5*P_RyR - 1e-4*(I_ecav_CaL/7.0)*e^-((V+5.0)^2/648.0);
 
-  %Stimulation Protocol
+  %Stimulation current calculation
   I_stim = odes.I_stim(t,p);
 
   %Concentration changes and buffers
