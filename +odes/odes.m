@@ -86,7 +86,7 @@ function [dxdt, I, J] = odes(t, X, p)
   S_IKr = X(141:145);
 
 
-  %Normalize Markov states
+  %Normalize Markov states - Technically a non-smooth operation
   S_LCC_cav = max(S_LCC_cav, 0); S_LCC_cav = S_LCC_cav/sum(S_LCC_cav);
   S_LCC_ecav = max(S_LCC_ecav, 0); S_LCC_ecav = S_LCC_ecav/sum(S_LCC_ecav);
   S_RyR = max(S_RyR, 0); S_RyR = S_RyR/sum(S_RyR);

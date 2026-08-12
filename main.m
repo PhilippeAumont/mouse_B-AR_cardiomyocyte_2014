@@ -1,4 +1,5 @@
 ;1
+clear;
 %{
 This is the main file of a mouse cardiomyocyte model.
 It should be in a directory with other directories such as +odes, +plotting and
@@ -246,6 +247,32 @@ S_Na_0,
 S_IKr_0
 ];
 
+%This functions is used to track progress through integration.
+function status = progressBar(t, y, flag, tf)
+  persistent lastPercent tstart
+  switch flag
+    case 'init'
+      lastPercent = -1;
+      tstart = tic;
+      fprintf('Progress:   0%%');
+    case ''
+      if isempty(t)
+        status = 0;
+        return;
+      end
+      currT = t(end);
+      percent = floor(100*currT/tf);
+      if percent > lastPercent
+        lastPercent = percent;
+        elapsed = toc(tstart);
+        fprintf('\rProgress: %3d%%  (t = %8.2f / %d, elapsed %5.1fs)', ...
+                percent, currT, tf, elapsed);
+      end
+    case 'done'
+      fprintf('\rProgress: 100%%  done.                                   \n');
+  end
+  status = 0;  % return 0 to keep integrating, 1 would stop it
+end
 
 
 %=================================== Set up ====================================
@@ -266,36 +293,40 @@ p.IBMX = 0;   %PDE inhibitor concentration [uM]
 % Warning: Very short smoothed spikes may not reach full amplitude
 % Warning: protocol misspell leads to "value on the right hand side of assignment is undefined".
 
-p.stim_start = 50;%[ms]
-p.stim_2nd_start = 130; %for two_spikes_smooth [ms]
-p.stim_period = 0.2;    %For train_smooth [ms]
+p.stim_start = 100;%[ms]
+p.stim_2nd_start = 10000; %for two_spikes_smooth [ms]
+p.stim_period = 100; %For train_smooth [ms]
 
 p.stim_dur = 1;%[ms]
 p.stim_amp = -80;%[mV]
 p.stim_k = 100000;
 
-tspan = [0,500];
+p.extra_var = false(); %whether to calculate currents and fluxes, can be time consuming
+
+tspan = [0,1000];
 pt_interval = 0.1;%[ms]
 
 %===============================================================================
 %Solver
 abstol_vect = 1e-9*ones(1,145); abstol_vect(79:145) = 1e-9; abstol_vect(78) = 1e-12;
 options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect, "NonNegative", 2:145, "MaxStep", 1);
+options = odeset(options, 'OutputFcn', @(t,y,flag) progressBar(t,y,flag,tspan(2)));
 
 [t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);
 
 %Time point interpolation
 tquery = 0:pt_interval:tspan(2);
-X_interp = interp1(t,X,tquery,'pchip');  %spline assumes continuity, pchip does not
+X_interp = interp1(t,X,tquery,'pchip');  %spline assumes continuity, pchip does not.
 
 %Calculate and save the Currents and Fluxes at each timepoint
-I = zeros(size(tquery)(1), 15); J = zeros(size(tquery)(1), 6);
-for k = 1:length(tquery)
+if (p.extra_var == true())
+  I = zeros(size(tquery)(1), 15); J = zeros(size(tquery)(1), 6);
+  for k = 1:length(tquery)
     [~, I_k, J_k] = odes.odes(tquery(k), X_interp(k,:).', p);
     I(k,:) = I_k(:).';
     J(k,:) = J_k(:).';
-end
-
+  end
+endif
 
 %Plotting - Can be run in the command window
 %Line plot:
