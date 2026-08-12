@@ -4,11 +4,11 @@ function dS = PLB(S, C_cyt)
   PP1_cyt_f = S(2);
 
   %Parameters
-  Km_up_np = 0.41;
-  Km_up_p = 0.31;
-  k_PLB_PKA = 0.108917;
+  Km_up_np = 0.41;             %uM
+  Km_up_p = 0.31;              %uM
+  k_PLB_PKA = 0.108917e-4;   %1/uM ms
   K_PLB_PKA = 4.90970e-4;
-  k_PLB_PP1 = 4.41956e-2;
+  k_PLB_PP1 = 4.41956e-5;    %1/uM ms
   K_PLB_PP1 = 1.69376e-2;
 
   %Calculations

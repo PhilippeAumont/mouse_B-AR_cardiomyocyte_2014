@@ -5,16 +5,16 @@ function dS = Tn1(S, Ca_i, C_cyt)
   f_cyt_Tn1_p = S(3);
 
   %Parameteres
-  LTRPN_tot = 70.0;
-  HTRPN_tot = 140.0;
-  k_on_htrpn = 2.37;
-  k_off_htrpn = 0.032;
-  k_on_ltrpn = 32.7;
-  k_off_ltrpn_np = 19.6;
-  k_off_ltrpn_p = 29.4;
-  k_Tn1_PKA = 0.0247254;
+  LTRPN_tot = 70.0;          %um
+  HTRPN_tot = 140.0;         %uM
+  k_on_htrpn = 2.37e-3;     %1/uM ms
+  k_off_htrpn = 3.2e-05;     %1/ms
+  k_on_ltrpn = 0.0327;       %1/uM ms
+  k_off_ltrpn_np = 0.0196;    %1/ms
+  k_off_ltrpn_p = 0.0294;     %1/ms
+  k_Tn1_PKA = 2.47254e-5;   %1/uM ms
   K_Tn1_PKA = 2.71430e-5;
-  k_Tn1_PP2A = 0.0865898;
+  k_Tn1_PP2A = 8.65898e-5;  %1/uM ms
   K_Tn1_PP2A = 0.801420;
 
   PP2A_cyt = 0.0607843;
@@ -30,3 +30,5 @@ function dS = Tn1(S, Ca_i, C_cyt)
   %Package output
   dS = [k_off_ltrpn; df_cyt_Tn1_p; dLTRPNCa; dHTRPNCa];
 endfunction
+
+

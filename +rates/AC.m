@@ -8,26 +8,26 @@ function dAC = AC(S, p)
   Gs_cyt_By = S(6);
 
   %Parameters
-  K_m_ATP = 340;          %uM
-  ATP = 5000;             %uM
-  AC_tot = 0.02622;       %uM
+  K_m_ATP = 340;            %uM
+  ATP = 5000;               %uM
+  AC_tot = 0.02622;        %uM
   f_56 = 0.74;
   f_cav_56 = 0.0875;
   f_ecav_47 = 0.1648;
-  K_m_56_Gsa = 0.0852;    %uM
+  K_m_56_Gsa = 0.0852;      %uM
   h_56_Gsa = 1.357;
   V_56_GBy = 1.430;
-  K_m_56_GsBy = 0.003793; %uM
+  K_m_56_GsBy = 0.003793;  %uM
   h_56_GsBy = 1.0842;
   AC56_basal = 0.0377;
-  AF_56 = 51.1335;        %1/s
-  K_m_47_Gsa = 0.05008;   %uM
+  AF_56 = 0.051133;        %1/ms
+  K_m_47_Gsa = 0.05008;     %uM
   h_47_Gsa = 1.1657;
   V_47_GBy = 1.3500;
-  K_m_47_GsBy = 0.004466; %uM
+  K_m_47_GsBy = 0.004466;  %uM
   h_47_GsBy = 0.8700;
   AC47_basal = 0.04725;
-  AF_47 = 9.283;          %1/s
+  AF_47 = 9.2830e-03;     %1/s
 
   %Concentrations and calculations
   AC56_cav = f_cav_56*f_56*AC_tot*p.V_cell/p.V_cav;

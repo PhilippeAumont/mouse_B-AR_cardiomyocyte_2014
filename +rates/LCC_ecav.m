@@ -19,23 +19,22 @@ function dS_LCC = LCC_ecav(S, C_ecav, Ca, V, p)
   i2p = S(17);
   i3p = S(18);
 
-
   %Parameters
   f_ecav_ICaL = 0.8;
   I_CaL_tot = 0.0273;         %uM
-  K_pc_max = 233.24;          %1/s
+  K_pc_max = 0.23324;        %1/ms
   K_pc_half = 10.0;           %uM
-  K_pcf = 40000;              %1/s
-  K_pcb = 2.4;                %1/s
-  k_co = 1000;                %1/s
-  k_cop = 4000;               %1/s
-  k_oc = 1000;                %1/s
-  k_ICaL_PKA = 1.74e-2;       %1/s
+  K_pcf = 40;                  %1/ms
+  K_pcb = 2.4e-3;            %1/ms
+  k_co = 1;                    %1/ms
+  k_cop = 4;                   %1/ms
+  k_oc = 1;                    %1/ms
+  k_ICaL_PKA = 1.74e-5;      %1/ms
   K_ICaL_PKA = 0.5;           %uM
-  k_ICaL_PP = 2.325e-4;       %1/s
+  k_ICaL_PP = 2.325e-7;     %1/ms
   K_ICaL_PP = 0.2;            %uM
 
-  PP = 0.1;                   %uM , CTE from PP and Inhbitor 1 module
+  PP = 0.1;                   %uM , constant from PP and Inhbitor 1 module
 
   %Calculations
   a = 0.4*e^((V+15.0)/15.0);
@@ -44,6 +43,7 @@ function dS_LCC = LCC_ecav(S, C_ecav, Ca, V, p)
   I_CaL_ecav_tot = f_ecav_ICaL*I_CaL_tot*p.V_cell/p.V_ecav;
   y = K_pc_max*Ca/(K_pc_half+Ca);
 
+  %Functions for phosphorylation and dephosphorylation
   function k = P(S)
     k = k_ICaL_PKA*C_ecav/(K_ICaL_PKA+I_CaL_ecav_tot*S);
   end
@@ -51,6 +51,7 @@ function dS_LCC = LCC_ecav(S, C_ecav, Ca, V, p)
     k = k_ICaL_PP*PP/(K_ICaL_PP+I_CaL_ecav_tot*S);
   end
 
+  %Precalculate phospho/dephospho rates
   c1_c1p = P(c1);
   c1p_c1 = DP(c1p)*ap^3*k_cop/(a^3*k_co);
   c2_c2p = P(c2);

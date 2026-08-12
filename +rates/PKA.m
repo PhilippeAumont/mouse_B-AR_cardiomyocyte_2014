@@ -29,24 +29,24 @@ function dPKA = PKA(S, C, cAMP, p)
   f_cav_PKA = 0.08;
   f_ecav_PKA = 0.20;
   f_cyt_PKA = 1-f_cav_PKA-f_ecav_PKA;
-  PKI_tot = 0.4*PKA_tot;                %uM
-  f_cav_PKI = f_cav_PKA;                %1/uM s
+  PKI_tot = 0.4*PKA_tot;                 %uM
+  f_cav_PKI = f_cav_PKA;
   f_ecav_PKI = f_ecav_PKA;
   f_cyt_PKI = f_cyt_PKA;
-  k_PKAI_f1 = 5.6;                      %1/uM s
+  k_PKAI_f1 = 5.6e-3;                  %1/uM ms
   K_PKAI_1 = 2.9;                       %uM
-  k_PKAI_f2 = k_PKAI_f1;                %1/uM s
+  k_PKAI_f2 = k_PKAI_f1;                 %1/uM ms
   K_PKAI_2 = 2.9;                       %uM
-  k_PKAI_f3 = 2.6;                      %1/s
+  k_PKAI_f3 = 2.6e-3;                  %1/ms
   K_PKAI_3 = 1.3;                       %uM
-  k_PKI_f = 50;                         %1/uM s
-  K_PKI = 2.6e-4;                       %uM
-  k_PKAII_f1 = k_PKAI_f1;               %1/uM s
+  k_PKI_f = 0.050;                     %1/uM ms
+  K_PKI = 2.6e-4;                      %uM
+  k_PKAII_f1 = k_PKAI_f1;                %1/uM ms
   K_PKAII_1 = 2.5;                      %uM
-  k_PKAII_f2 = k_PKAI_f1;               %1/uM s
+  k_PKAII_f2 = k_PKAI_f1;                %1/uM ms
   K_PKAII_2 = 2.5;                      %uM
-  k_PKAII_f3 = k_PKAI_f3;               %1/s
-  K_PKAII_3 = K_PKAI_3;                 %uM
+  k_PKAII_f3 = k_PKAI_f3;                %1/ms
+  K_PKAII_3 = K_PKAI_3;                  %uM
 
   %Concentrations and calculations
   %Caveolae (PKAI isoform)
@@ -70,7 +70,6 @@ function dPKA = PKA(S, C, cAMP, p)
   k_PKAI_b1 = k_PKAI_f1*K_PKAI_1;
   k_PKAI_b2 = k_PKAI_f2*K_PKAI_2;
   k_PKAI_b3 = k_PKAI_f3/K_PKAI_3;
-
 
   %ODEs
   %Caveolae
@@ -109,9 +108,7 @@ function dPKA = PKA(S, C, cAMP, p)
            - k_PKI_f*PKI_cyt*C_cyt;
   dPKIC_cyt = -k_PKI_b*PKIC_cyt + k_PKI_f*PKI_cyt*C_cyt;
 
-
   %Package output
-
   dPKA = [dcAMP_cav_PKA;dARC_cav;dA2RC_cav;dA2R_cav;dC_cav;dPKIC_cav;dcAMP_ecav_PKA;
           dARC_ecav;dA2RC_ecav;dA2R_ecav;dC_ecav;dPKIC_ecav;dcAMP_cyt_PKA;dARC_cyt;
           dA2RC_cyt;dA2R_cyt;dC_cyt;dPKIC_cyt];

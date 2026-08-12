@@ -7,9 +7,7 @@ function dS_IKr = IKr(S, V, p)
   a_ir = 0.090821*e^(0.023391*(V+5.0));
   B_ir = 0.006497*e^(-0.03268*(V+5.0));
 
-
   %Prepare MSM Transition matrix
-
   Q =[
     -(a_ir+B_a1),0,      0,            a_a1,         B_ir;
     0,           -(a_a0),B_a0,         0,            0;
@@ -20,5 +18,4 @@ function dS_IKr = IKr(S, V, p)
 
   %Calculate new states
   dS_IKr = Q*S;
-
 endfunction

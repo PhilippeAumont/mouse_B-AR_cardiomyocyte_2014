@@ -1,22 +1,23 @@
 ;1
 %{
-This is the main file of a mouse cardiomyocite model.
+This is the main file of a mouse cardiomyocyte model.
 It should be in a directory with other directories such as +odes, +plotting and
 +rates. This allows it to call scripts/function from those files
 Refer to the original paper for details on parameters. I tried to stay as consistent
 with the notation as possible, expect when it was too verbose.
+The end of this files contains the settings to run simulations.
 Philippe Aumont
 Bondarenko VE (2014) A Compartmentalized Mathematical Model of the
 B1-Adrenergic Signaling System in Mouse Ventricular Myocytes. PLoS
 ONE 9(2): e89113. https://doi.org/10.1371/journal.pone.0089113
 
 Units
-- Time: s (but the simulation is run over ms)
+- Time: ms (Published model is in s. It was converted to ms to work)
 - Concentration: uM
 - Volume: uL
 - Voltage: mV
--...
-
+- Currents: pA/pF
+- Other rates: mS/uF
 %}
 
 %Parameters
@@ -32,31 +33,31 @@ p.V_cav = 7.600e-07;  %uL (2% of cell volume)
 p.V_ecav = 1.520e-06; %uL (4% of cell volume)
 
 % %Extracellular Ion concentrations
-p.K_o = 5400;    %uM
-p.Na_o = 140000; %uM
-p.Ca_o = 1800;   %uM
+p.K_o = 5400;      %uM
+p.Na_o = 140000;   %uM
+p.Ca_o = 1800;     %uM
 
 % %SR Parameters
-p.v1 = 4500;      %1/s %From RyR Module Parameters
-p.v2 = 1.74e-2;   %s-1
-p.v3 = 306.0;     %1/s %From PLB module
-p.t_tr = 0.02;    %s
-p.t_xfer = 0.008; %s
+p.v1 = 4.5;          %1/ms %From RyR Module Parameters
+p.v2 = 1.74e-5;    %1/ms
+p.v3 = 0.306;       %1/ms %From PLB module
+p.t_tr = 20;         %ms
+p.t_xfer = 8;        %ms
 
 % %Calmodulin and Calsequestrin
-p.CMDN_tot = 50.0;    %uM
-p.CSQN_tot = 15000.0; %uM
-p.Km_CMDN = 0.238;     %uM
-p.Km_CSQN = 800.0;     %uM
+p.CMDN_tot = 50.0;      %uM
+p.CSQN_tot = 15000.0;  %uM
+p.Km_CMDN = 0.238;      %uM
+p.Km_CSQN = 800.0;      %uM
 
 % %Membrane current parameters
-p.C_m = 1.0;          %uF/cm2
-p.F = 96.5;           %C/mmol
-p.T = 298;            %K
-p.R = 8.314;          %J/mol*K
-p.k_NaCa = 275;       %pA/pF
+p.C_m = 1.0;           %uF/cm2
+p.F = 96.5;            %C/mmol
+p.T = 298;             %K
+p.R = 8.314;           %J/mol*K
+p.k_NaCa = 275;        %pA/pF
 p.Km_Na = 87500;      %uM
-p.Km_Ca = 1380;       %uM
+p.Km_Ca = 1380;        %uM
 p.k_sat = 0.27;
 p.n = 0.35;
 p.I_max_pCa = 0.051;
@@ -65,12 +66,12 @@ p.G_Cab = 0.000284;   %mS/uF
 p.G_Nab = 0.0063;     %mS/uF
 p.G_Kss = 0.0611;     %mS/uF
 p.G_Ks = 0.00575;     %mS/uF
-p.G_Kr = 0.078;       %mS/uF
-p.k_f = 23.761;       %1/s
-p.k_b = 36.778;       %1/s
-p.G_ClCa = 10.0;      %mS/uF
-p.Km_Cl = 10.0;       %uM
-p.E_Cl = -40;         %mV
+p.G_Kr = 0.078;        %mS/uF
+p.k_f = 0.023761;     %1/ms
+p.k_b = 0.036778;     %1/ms
+p.G_ClCa = 10.0;       %mS/uF
+p.Km_Cl = 10.0;        %uM
+p.E_Cl = -40;           %mV
 
 
 
@@ -98,7 +99,7 @@ S_LCC_cav_0 = [
 
 S_LCC_ecav_0 = [
 0.286851e-11,   %O
-0.872261,       %C1
+0.872261,        %C1
 0.469850e-2,    %C2
 0.949082e-5,    %C3
 0.852050e-8,    %C4
@@ -107,7 +108,7 @@ S_LCC_ecav_0 = [
 0.194870e-7,    %I2
 0.187798e-7     %I3
 0.328449e-9,    %O-p
-0.120548,       %C1-p
+0.120548,        %C1-p
 0.246338e-2,    %C2-p
 0.188771e-4,    %C3-p
 0.642918e-7,    %C4-p
@@ -120,7 +121,7 @@ S_LCC_ecav_0 = [
 S_RyR_0 = [
 0.854737e-5,    %O1
 0.360412e-10,   %O2
-0.996216,       %C1
+0.996216,        %C1
 0.961561e-4,    %C2
 0.526065e-7,    %O1-p
 0.369705e-12,   %O2-p
@@ -132,12 +133,12 @@ S_Na_0 = [
 0.367777e-6,    %O
 0.161178e-3,    %C1
 0.132248e-1,    %C2
-0.436222,       %C3
+0.436222,        %C3
 0.153271e-3,    %IF
 0.146044e-4,    %I1
 0.545874e-7,    %I2
 0.125760e-1,    %IC2
-0.414822,       %IC3
+0.414822,        %IC3
 0.515006e-7,    %O-p
 0.225696e-4,    %C1-p
 0.185179e-2,    %C2-p
@@ -151,7 +152,7 @@ S_Na_0 = [
 
 S_IKr_0 = [
 0.332600e-3,    %O
-0.997365,       %C0
+0.997365,        %C0
 0.135218e-2,    %C1
 0.873596e-3,    %C2
 0.763767e-4     %I
@@ -160,31 +161,31 @@ S_IKr_0 = [
 
 %Initial Conditions
 X0 = [
--78.2787,       %membrane potential %mV
-0.100157,       %myoplasmic Ca (Ca_i)%uM
-0.100157,       %subspace Ca (Ca_ss)%uM
-1081.23,        %JSR Ca (Ca_JSR)    %uM
-1081.23,        %NSR Ca (Ca_NSR)    %uM
-8.66981,        %LTRPNCa            %uM
-123.369,        %HTRPNCa            %uM
-10508.5,        %Myoplasmic Na      %uM
-145400,         %Myoplasmic K       %uM
-0.533799e-2,    %a_to_f
+-78.2787,       %membrane potential
+0.100157,       %myoplasmic Ca (Ca_i)
+0.100157,       %subspace Ca (Ca_ss)
+1081.23,        %JSR Ca (Ca_JSR)
+1081.23,        %NSR Ca (Ca_NSR)
+8.66981,        %LTRPNCa
+123.369,        %HTRPNCa
+10508.5,        %Myoplasmic Na
+145400,         %Myoplasmic K
+0.533799e-2,   %a_to_f
 0.999945,       %i_to_f
-0.713943e-3,    %a_ur
+0.713943e-3,   %a_ur
 0.996991,       %i_ur
-0.713943e-3,    %a_Kss
+0.713943e-3,   %a_Kss
 0.225905,       %f_cav_PLM_p
 0.908852,       %f_ecav_IKur
-0.713943e-3,    %a_urp
+0.713943e-3,   %a_urp
 0.996991,       %i_urp
 0.252661,       %f_ecav_IKto,f
-0.111499e-2,    %a_to_fp
+0.111499e-2,   %a_to_fp
 0.999983,       %i_to_fp
 0.186637,       %f_cyt_PLB_p
 0.364102,       %f_cyt_Tnl_p
-0.799452e-3,    %R_cav_PKA    %
-0.626341e-27,   %R_cav_GRK2
+0.799452e-3,   %R_cav_PKA
+0.626341e-27,  %R_cav_GRK2
 0.132189e-2,    %Gs_cav_aGTP
 0.180824e-2,    %Gs_cav_By
 0.487356e-3,    %Gs_cav_aGDP
@@ -198,45 +199,45 @@ X0 = [
 0.331511e-3,    %Gs_cyt_aGTP
 0.663570e-3,    %Gs_cyt_By
 0.333058e-3,    %Gs_cyt_aGDP
-0.000000,       %cAMP_cav_AC56 %
-0.000000,       %cAMP_ecav_AC47
-0.000000,       %cAMP_cyt_AC56
-0.000000,       %cAMP_cyt_AC47
+0.000000,        %cAMP_cav_AC56
+0.000000,        %cAMP_ecav_AC47
+0.000000,        %cAMP_cyt_AC56
+0.000000,        %cAMP_cyt_AC47
 0.125103e-1,    %PDE3_cav_p
 0.580798e-2,    %PDE4_cav_p
-0.000000,       %cAMP_cav_PDE2
-0.000000,       %cAMP_cav_PDE3
-0.000000,       %cAMP_cav_PDE4
+0.000000,        %cAMP_cav_PDE2
+0.000000,        %cAMP_cav_PDE3
+0.000000,        %cAMP_cav_PDE4
 0.158226e-1,    %PDE4_ecav_p
-0.000000,       %cAMP_ecav_PDE2
-0.000000,       %cAMP_ecav_PDE4
+0.000000,        %cAMP_ecav_PDE2
+0.000000,        %cAMP_ecav_PDE4
 0.120998e-2,    %PDE3_cyt_p
 0.373102e-2,    %PDE4_cyt_p
-0.000000,       %cAMP_cyt_PDE2
-0.000000,       %cAMP_cyt_PDE3
-0.000000,       %cAMP_cyt_PDE4
-7.92317,        %cAMP_cav_PKA
-0.299288,       %ARC_cav
-0.303358e-1,       %A2RC_cav
-0.858440,       %A2R_cav
+0.000000,        %cAMP_cyt_PDE2
+0.000000,        %cAMP_cyt_PDE3
+0.000000,        %cAMP_cyt_PDE4
+7.92317,         %cAMP_cav_PKA
+0.299288,        %ARC_cav
+0.303358e-1,    %A2RC_cav
+0.858440,        %A2R_cav
 0.459397e-1,    %C_cav
-0.823499,       %PKIC_cav
-6.74029,        %cAMP_ecav_PKA
-0.653988,       %ARC_ecav
-0.132861,       %A2RC_ecav
-1.17000,        %A2R_ecav
-0.147623,       %C_ecav
-1.03338,        %PKIC_ecav
-9.32461,        %cAMP_cyt_PKA
+0.823499,        %PKIC_cav
+6.74029,         %cAMP_ecav_PKA
+0.653988,        %ARC_ecav
+0.132861,        %A2RC_ecav
+1.17000,         %A2R_ecav
+0.147623,        %C_ecav
+1.03338,         %PKIC_ecav
+9.32461,         %cAMP_cyt_PKA
 0.996350e-1,    %ARC_cyt
 0.140099e-1,    %A2RC_cyt
-0.273868,       %A2R_cyt
+0.273868,        %A2R_cyt
 0.665022e-1,    %C_cyt
-0.218365,       %PKIC_cyt
+0.218365,        %PKIC_cyt
 0.213571e-1,    %Inhib1_cyt_p
-0.253399,       %cAMP_cav
-0.507889,       %cAMP_ecav
-0.407775,       %cAMP_cyt
+0.253399,        %cAMP_cav
+0.507889,        %cAMP_ecav
+0.407775,        %cAMP_cyt
 0.254152e-11,   %RyR Modulation factor
 S_LCC_cav_0,
 S_LCC_ecav_0,
@@ -245,6 +246,9 @@ S_Na_0,
 S_IKr_0
 ];
 
+
+
+%=================================== Set up ====================================
 
 %Stimulation protocols:
 p.protocol = "spike_smooth";
@@ -262,37 +266,40 @@ p.IBMX = 0;   %PDE inhibitor concentration [uM]
 % Warning: Very short smoothed spikes may not reach full amplitude
 % Warning: protocol misspell leads to "value on the right hand side of assignment is undefined".
 
-p.stim_start = 200;
-p.stim_2nd_start = 130;
-p.stim_period = 0.2;
-p.stim_dur = 1;
-p.stim_amp = -80;
+p.stim_start = 50;%[ms]
+p.stim_2nd_start = 130; %for two_spikes_smooth [ms]
+p.stim_period = 0.2;    %For train_smooth [ms]
+
+p.stim_dur = 1;%[ms]
+p.stim_amp = -80;%[mV]
 p.stim_k = 100000;
 
+tspan = [0,500];
+pt_interval = 0.1;%[ms]
+
+%===============================================================================
 %Solver
-tspan = 0:0.1:500;
+abstol_vect = 1e-9*ones(1,145); abstol_vect(79:145) = 1e-9; abstol_vect(78) = 1e-12;
+options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect, "NonNegative", 2:145, "MaxStep", 1);
 
-abstol_vect = 1e-9*ones(1,145);
-abstol_vect = 1e-9*ones(1,145); abstol_vect(79:145) = 1e-12; abstol_vect(78) = 1e-12;
-options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect, "NonNegative", 2:145, "MaxStep", 0.01);
-
-options = odeset(options, "OutputFcn", @odeplot, "OutputSel", [1]);
 [t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);
-%dx = odes.odes(0,X0,p);
+
+%Time point interpolation
+tquery = 0:pt_interval:tspan(2);
+X_interp = interp1(t,X,tquery,'pchip');  %spline assumes continuity, pchip does not
 
 %Calculate and save the Currents and Fluxes at each timepoint
-I_all = zeros(size(t)(1), 15); J_all = zeros(size(t)(1), 6);
-for k = 1:length(t)
-    [~, I_k, J_k] = odes.odes(t(k), X(k,:).', p);
-    I_all(k,:) = I_k(:).';
-    J_all(k,:) = J_k(:).';
+I = zeros(size(tquery)(1), 15); J = zeros(size(tquery)(1), 6);
+for k = 1:length(tquery)
+    [~, I_k, J_k] = odes.odes(tquery(k), X_interp(k,:).', p);
+    I(k,:) = I_k(:).';
+    J(k,:) = J_k(:).';
 end
 
 
-%Plotting
-%plotting.line_plot(t, X(:,1));     %a:b, includes a but not b
-
-
+%Plotting - Can be run in the command window
+%Line plot:
+  %plotting.line_plot(tquery, X_interp, [1]);
 
 
 

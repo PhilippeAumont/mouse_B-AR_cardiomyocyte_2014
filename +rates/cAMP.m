@@ -21,9 +21,9 @@ function dcAMP = cAMP(S, cAMP, p);
   cAMP_cyt = cAMP(3);
 
   %Parameters
-  J_cav_ecav = 5.000e-9;  %uL/s
-  J_cav_cyt = 7.500e-8;   %uL/s
-  J_ecav_cyt = 9.000e-9;  %uL/s
+  J_cav_ecav = 5.000e-12;  %uL/ms
+  J_cav_cyt = 7.500e-11;   %uL/ms
+  J_ecav_cyt = 9.000e-12;  %uL/ms
 
   %ODEs compilations
   dcAMP_cav = dcAMP_cav_PKA + dcAMP_cav_AC56 - dcAMP_cav_PDE2 - dcAMP_cav_PDE3...
