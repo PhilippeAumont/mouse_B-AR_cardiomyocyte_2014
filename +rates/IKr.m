@@ -1,4 +1,14 @@
 function dS_IKr = IKr(S, V, p)
+  %Unpack state vector
+  o = S(1);
+  c1 = S(2);
+  c2 = S(3);
+  i = S(4);
+
+  c0 = 1 - (o+c1+c2+i);
+
+  Y = [o;c0;c1;c2;i];
+
   %Calculations
   a_a0 = 0.022348*e^(0.01176*V);
   B_a0 = 0.047002*e^(-0.0631*V);
@@ -17,5 +27,6 @@ function dS_IKr = IKr(S, V, p)
   ];
 
   %Calculate new states
-  dS_IKr = Q*S;
+  dS_IKr_pre = Q*Y;
+  dS_IKr = dS_IKr_pre([1,3,4,5]);
 endfunction

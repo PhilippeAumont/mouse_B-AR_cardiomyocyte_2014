@@ -3,21 +3,24 @@ function dS_Na = Fast_Na(S, C_cav, V)
   o = S(1);
   c1 = S(2);
   c2 = S(3);
-  c3 = S(4);
-  if_na = S(5);
-  i1 = S(6);
-  i2 = S(7);
-  ic2 = S(8);
-  ic3 = S(9);
-  op = S(10);
-  c1p = S(11);
-  c2p = S(12);
-  c3p = S(13);
-  ifp_na = S(14);
-  i1p = S(15);
-  i2p = S(16);
-  ic2p = S(17);
-  ic3p = S(18);
+  if_na = S(4);
+  i1 = S(5);
+  i2 = S(6);
+  ic2 = S(7);
+  ic3 = S(8);
+  op = S(9);
+  c1p = S(10);
+  c2p = S(11);
+  c3p = S(12);
+  ifp_na = S(13);
+  i1p = S(14);
+  i2p = S(15);
+  ic2p = S(16);
+  ic3p = S(17);
+
+  c3 = 1 - (o+c1+c2+if_na+i1+i2+ic2+ic3+op+c1p+c2p+c3p+ifp_na+i1p+i2p+ic2p+ic3p);
+
+  Y = [o;c1;c2;c3;if_na;i1;i2;ic2;ic3;op;c1p;c2p;c3p;ifp_na;i1p;i2p;ic2p;ic3p];
 
   %Parameters
   k_PKA = 6.8400e-6;   %1/uM ms
@@ -95,6 +98,6 @@ function dS_Na = Fast_Na(S, C_cav, V)
        Op;C1p;C2p;C3p;IFp_Na;I1p;I2p;IC2p;IC3p];
 
   %Calculate new states
-  dS_Na = Q*S;
-
+  dS_Na_pre = Q*Y;
+  dS_Na = dS_Na_pre([1,2,3,5:18]);
 endfunction

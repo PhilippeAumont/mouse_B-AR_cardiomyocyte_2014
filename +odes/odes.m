@@ -79,20 +79,21 @@ function [dxdt, I, J] = odes(t, X, p)
   cAMP_ecav = X(76);
   cAMP_cyt = X(77);
   P_RyR  = X(78);
-  S_LCC_cav = X(79:96);
-  S_LCC_ecav = X(97:114);
-  S_RyR = X(115:122);
-  S_Na = X(123:140);
-  S_IKr = X(141:145);
+  S_LCC_cav = X(79:95);
+  S_LCC_ecav = X(96:112);
+  S_RyR = X(113:119);
+  S_Na = X(120:136);
+  S_IKr = X(137:140);
 
 
   %Normalize Markov states - Technically a non-smooth operation
+  %{
   S_LCC_cav = max(S_LCC_cav, 0); S_LCC_cav = S_LCC_cav/sum(S_LCC_cav);
   S_LCC_ecav = max(S_LCC_ecav, 0); S_LCC_ecav = S_LCC_ecav/sum(S_LCC_ecav);
   S_RyR = max(S_RyR, 0); S_RyR = S_RyR/sum(S_RyR);
   S_Na = max(S_Na, 0); S_Na = S_Na/sum(S_Na);
   S_IKr = max(S_IKr, 0); S_IKr = S_IKr/sum(S_IKr);
-
+  %}
 %============================== Signalling =====================================
 
   C = [C_cav; C_ecav; C_cyt];
@@ -128,17 +129,17 @@ function [dxdt, I, J] = odes(t, X, p)
   %MSM
   %LCC
   dS_LCC_cav = rates.LCC_cav(S_LCC_cav, C(1), Ca_i, V, p);
-  I_cav_CaL = 0.2*(0.3772*S_LCC_cav(1) +  0.7875*S_LCC_cav(10))*(V-52.0);
+  I_cav_CaL = 0.2*(0.3772*S_LCC_cav(1) +  0.7875*S_LCC_cav(9))*(V-52.0);
 
   dS_LCC_ecav = rates.LCC_ecav(S_LCC_ecav, C(2), Ca_ss, V, p);
-  I_ecav_CaL = 0.8*(0.3772*S_LCC_ecav(1) + 0.7875*S_LCC_ecav(10))*(V-52.0);
+  I_ecav_CaL = 0.8*(0.3772*S_LCC_ecav(1) + 0.7875*S_LCC_ecav(9))*(V-52.0);
 
   I_CaL = I_cav_CaL + I_ecav_CaL;
 
   %Fast Na
   dS_Na = rates.Fast_Na(S_Na, C(1), V);
   E_Na = (p.R*p.T/p.F) * log((0.9*p.Na_o + 0.1*p.K_o)/(0.9*Na_i + 0.1*K_i));
-  I_Na = (14.4*S_Na(1) + 18.0*S_Na(10))*(V-E_Na);
+  I_Na = (14.4*S_Na(1) + 18.0*S_Na(9))*(V-E_Na);
 
   %RyR
   dS_RyR = rates.RyR(S_RyR, Ca_ss, C(2), p);
@@ -183,7 +184,7 @@ function [dxdt, I, J] = odes(t, X, p)
 
 %================================ Compiling ====================================
   %Fluxes
-  J_rel = p.v1*(S_RyR(1)+S_RyR(2)+S_RyR(5)+S_RyR(6))*(Ca_JSR-Ca_ss*P_RyR);
+  J_rel = p.v1*(S_RyR(1)+S_RyR(2)+S_RyR(4)+S_RyR(5))*(Ca_JSR-Ca_ss*P_RyR);
   J_tr = (Ca_NSR - Ca_JSR)/p.t_tr;
   J_xfer = (Ca_ss - Ca_i)/p.t_xfer;
   J_leak = p.v2*(Ca_NSR - Ca_i);

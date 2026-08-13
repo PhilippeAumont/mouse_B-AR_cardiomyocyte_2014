@@ -79,7 +79,7 @@ p.E_Cl = -40;           %mV
 %Initial Markov State conditions
 S_LCC_cav_0 = [
 0.320206e-11,   %O
-0.973685,        %C1
+%0.973685,        %C1
 0.524483e-2,    %C2
 0.105944e-4,    %C3
 0.951124e-8,    %C4
@@ -100,7 +100,7 @@ S_LCC_cav_0 = [
 
 S_LCC_ecav_0 = [
 0.286851e-11,   %O
-0.872261,        %C1
+%0.872261,        %C1
 0.469850e-2,    %C2
 0.949082e-5,    %C3
 0.852050e-8,    %C4
@@ -122,7 +122,7 @@ S_LCC_ecav_0 = [
 S_RyR_0 = [
 0.854737e-5,    %O1
 0.360412e-10,   %O2
-0.996216,        %C1
+%0.996216,        %C1
 0.961561e-4,    %C2
 0.526065e-7,    %O1-p
 0.369705e-12,   %O2-p
@@ -134,7 +134,7 @@ S_Na_0 = [
 0.367777e-6,    %O
 0.161178e-3,    %C1
 0.132248e-1,    %C2
-0.436222,        %C3
+%0.436222,        %C3
 0.153271e-3,    %IF
 0.146044e-4,    %I1
 0.545874e-7,    %I2
@@ -153,7 +153,7 @@ S_Na_0 = [
 
 S_IKr_0 = [
 0.332600e-3,    %O
-0.997365,        %C0
+%0.997365,        %C0
 0.135218e-2,    %C1
 0.873596e-3,    %C2
 0.763767e-4     %I
@@ -247,7 +247,7 @@ S_Na_0,
 S_IKr_0
 ];
 
-%This functions is used to track progress through integration.
+%This functions is used to live track progress through integration.
 function status = progressBar(t, y, flag, tf)
   persistent lastPercent tstart
   switch flag
@@ -279,7 +279,7 @@ end
 
 %Stimulation protocols:
 p.protocol = "spike_smooth";
-p.L = 0;      %B_AR ligand concentration [uM]
+p.L = 100;      %B_AR ligand concentration [uM]
 p.IBMX = 0;   %PDE inhibitor concentration [uM]
 
 % none: No stimulation
@@ -303,20 +303,20 @@ p.stim_k = 100000;
 
 p.extra_var = false(); %whether to calculate currents and fluxes, can be time consuming
 
-tspan = [0,1000];
+tspan = [0,200];
 pt_interval = 0.1;%[ms]
 
 %===============================================================================
 %Solver
-abstol_vect = 1e-9*ones(1,145); abstol_vect(79:145) = 1e-9; abstol_vect(78) = 1e-12;
-options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect, "NonNegative", 2:145, "MaxStep", 1);
+abstol_vect = 1e-9*ones(1,140); abstol_vect(79:140) = 1e-9; abstol_vect(78) = 1e-12;
+options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect,"NonNegative", 2:140, 'MaxStep', 0.5);
 options = odeset(options, 'OutputFcn', @(t,y,flag) progressBar(t,y,flag,tspan(2)));
 
 [t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);
 
 %Time point interpolation
 tquery = 0:pt_interval:tspan(2);
-X_interp = interp1(t,X,tquery,'pchip');  %spline assumes continuity, pchip does not.
+X_interp = interp1(t,X,tquery,'spline');  %spline assumes continuity, pchip does not.
 
 %Calculate and save the Currents and Fluxes at each timepoint
 if (p.extra_var == true())

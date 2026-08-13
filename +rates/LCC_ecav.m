@@ -1,23 +1,26 @@
 function dS_LCC = LCC_ecav(S, C_ecav, Ca, V, p)
   %Unpack state vector
   o = S(1);
-  c1 = S(2);
-  c2 = S(3);
-  c3 = S(4);
-  c4 = S(5);
-  cp = S(6);
-  i1 = S(7);
-  i2 = S(8);
-  i3 = S(9);
-  op = S(10);
-  c1p = S(11);
-  c2p = S(12);
-  c3p = S(13);
-  c4p = S(14);
-  cpp = S(15);
-  i1p = S(16);
-  i2p = S(17);
-  i3p = S(18);
+  c2 = S(2);
+  c3 = S(3);
+  c4 = S(4);
+  cp = S(5);
+  i1 = S(6);
+  i2 = S(7);
+  i3 = S(8);
+  op = S(9);
+  c1p = S(10);
+  c2p = S(11);
+  c3p = S(12);
+  c4p = S(13);
+  cpp = S(14);
+  i1p = S(15);
+  i2p = S(16);
+  i3p = S(17);
+
+  c1 = 1 - (o+c2+c3+c4+cp+i1+i2+i3+op+c1p+c2p+c3p+c4p+cpp+i1p+i2p+i3p);
+
+  Y = [o;c1;c2;c3;c4;cp;i1;i2;i3;op;c1p;c2p;c3p;c4p;cpp;i1p;i2p;i3p];
 
   %Parameters
   f_ecav_ICaL = 0.8;
@@ -96,6 +99,7 @@ function dS_LCC = LCC_ecav(S, C_ecav, Ca, V, p)
        Op;C1p;C2p;C3p;C4p;Cpp;I1p;I2p;I3p];
 
   %Calculate new states
-  dS_LCC = Q*S;
+  dS_LCC_pre = Q*Y;
+  dS_LCC = dS_LCC_pre([1,3:18]);
 
 endfunction

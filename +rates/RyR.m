@@ -2,12 +2,15 @@ function dS_RyR = RyR(S, Ca_ss, C_ecav, p)
   %Unpack state vector
   o1 = S(1);
   o2 = S(2);
-  c1 = S(3);
-  c2 = S(4);
-  o1p = S(5);
-  o2p = S(6);
-  c1p = S(7);
-  c2p = S(8);
+  c2 = S(3);
+  o1p = S(4);
+  o2p = S(5);
+  c1p = S(6);
+  c2p = S(7);
+
+  c1 = 1-(o1+o2+c2+o1p+o2p+c1p+c2p);
+
+  Y = [o1;o2;c1;c2;o1p;o2p;c1p;c2p];
 
   %Parameters
   RyR_tot = 0.1993;        %uM
@@ -69,6 +72,6 @@ function dS_RyR = RyR(S, Ca_ss, C_ecav, p)
        O1p;O2p;C1p;C2p];
 
   %Calculate new states
-  dS_RyR = Q*S;
-
+  dS_RyR_pre = Q*Y;
+  dS_RyR = dS_RyR_pre([1,2,4,5,6,7,8]);
 endfunction
