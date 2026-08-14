@@ -84,16 +84,19 @@ function [dxdt, I, J] = odes(t, X, p)
   S_RyR = X(113:119);
   S_Na = X(120:136);
   S_IKr = X(137:140);
+  S_Lys = X(141:148);
 
+%============================== Lysosome =======================================
+  S_Lys = S_Lys + %All the cytoplasmic concentrations
+  dNLys = lys.modelLIH_RA2019(t,S_Lys,p);
+  %[dAeffdt; dNHdt; dpHdt; dNKdt; dNNadt; dNCldt; dNCaTdt ; dNCaFdt];
+  dH_lys = dNLys(2)/(p.NA*p.V_Lys);
+  dK_lys = dNLys(2)/(p.NA*p.V_Lys);
+  dNa_lys = dNLys(2)/(p.NA*p.V_Lys);
+  dCl_lys = dNLys(2)/(p.NA*p.V_Lys);
+  dCaT_lys = dNLys(2)/(p.NA*p.V_Lys);
+  dHCaF_lys = dNLys(2)/(p.NA*p.V_Lys);
 
-  %Normalize Markov states - Technically a non-smooth operation
-  %{
-  S_LCC_cav = max(S_LCC_cav, 0); S_LCC_cav = S_LCC_cav/sum(S_LCC_cav);
-  S_LCC_ecav = max(S_LCC_ecav, 0); S_LCC_ecav = S_LCC_ecav/sum(S_LCC_ecav);
-  S_RyR = max(S_RyR, 0); S_RyR = S_RyR/sum(S_RyR);
-  S_Na = max(S_Na, 0); S_Na = S_Na/sum(S_Na);
-  S_IKr = max(S_IKr, 0); S_IKr = S_IKr/sum(S_IKr);
-  %}
 %============================== Signalling =====================================
 
   C = [C_cav; C_ecav; C_cyt];

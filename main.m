@@ -13,7 +13,7 @@ B1-Adrenergic Signaling System in Mouse Ventricular Myocytes. PLoS
 ONE 9(2): e89113. https://doi.org/10.1371/journal.pone.0089113
 
 Units
-- Time: ms (Published model is in s. It was converted to ms to work)
+- Time: ms (Published model is in s. It was converted to ms)
 - Concentration: uM
 - Volume: uL
 - Voltage: mV
@@ -23,58 +23,32 @@ Units
 
 %Parameters
 % %Cell Parameters
-
-p.A_cap = 1.534e-4;   %cm2
-p.V_cell = 38.00e-6;  %uL
-p.V_cyt = 25.84e-6;   %uL
-p.V_JSR = 0.12e-6;    %uL
-p.V_NSR = 2.098e-6;   %uL
-p.V_ss = 1.485e-9;    %uL
-p.V_cav = 7.600e-07;  %uL (2% of cell volume)
-p.V_ecav = 1.520e-06; %uL (4% of cell volume)
-
-% %Extracellular Ion concentrations
-p.K_o = 5400;      %uM
-p.Na_o = 140000;   %uM
-p.Ca_o = 1800;     %uM
-
-% %SR Parameters
-p.v1 = 4.5;          %1/ms %From RyR Module Parameters
-p.v2 = 1.74e-5;    %1/ms
-p.v3 = 0.306;       %1/ms %From PLB module
-p.t_tr = 20;         %ms
-p.t_xfer = 8;        %ms
-
-% %Calmodulin and Calsequestrin
-p.CMDN_tot = 50.0;      %uM
-p.CSQN_tot = 15000.0;  %uM
-p.Km_CMDN = 0.238;      %uM
-p.Km_CSQN = 800.0;      %uM
-
-% %Membrane current parameters
-p.C_m = 1.0;           %uF/cm2
-p.F = 96.5;            %C/mmol
-p.T = 298;             %K
-p.R = 8.314;           %J/mol*K
-p.k_NaCa = 275;        %pA/pF
-p.Km_Na = 87500;      %uM
-p.Km_Ca = 1380;        %uM
-p.k_sat = 0.27;
-p.n = 0.35;
-p.I_max_pCa = 0.051;
-p.Km_pCa = 0.5;        %uM
-p.G_Cab = 0.000284;   %mS/uF
-p.G_Nab = 0.0063;     %mS/uF
-p.G_Kss = 0.0611;     %mS/uF
-p.G_Ks = 0.00575;     %mS/uF
-p.G_Kr = 0.078;        %mS/uF
-p.k_f = 0.023761;     %1/ms
-p.k_b = 0.036778;     %1/ms
-p.G_ClCa = 10.0;       %mS/uF
-p.Km_Cl = 10.0;        %uM
-p.E_Cl = -40;           %mV
+load("parameters.mat")
 
 
+%Set up lysosome model
+N_lys = 1;  %NBR of Lysosomes -> to set up later
+init_Aeff = 0.30;
+init_Ca_F = 600; %uM
+init_Ca_T = 6000; %uM
+init_Cl = 1000; %uM
+init_H = 1; %uM -> Equivalent to pH 6
+init_K = 50000; %uM
+init_Na = 20000; %uM
+
+init_pH = 6;
+init_psi_total = 0; %mV
+%Initial conditions from initial model parameters.
+%{
+init_NH = init_H*init_V*p.NA;       %H amount
+init_NK = init_K*init_V*p.NA;       %K amount
+init_NNa = init_Na*init_V*p.NA;     %Na amount
+init_NCl = init_Cl*init_V*p.NA;     %Cl amount
+init_NCa_T = init_Ca_T*init_V*p.NA; %Total Ca amount
+init_NCa_F = init_Ca_F*init_V*p.NA; %Free Ca amount
+X0_lys = [init_Aeff; init_NH; init_pH; init_NK; init_NNa; init_NCl; init_NCa_T ; init_NCa_F];
+%}
+X0_lys = [init_Aeff; init_H; init_pH; init_K; init_Na; init_Cl; init_Ca_T; init_Ca_F];
 
 %Initial Markov State conditions
 S_LCC_cav_0 = [
@@ -244,7 +218,8 @@ S_LCC_cav_0,
 S_LCC_ecav_0,
 S_RyR_0,
 S_Na_0,
-S_IKr_0
+S_IKr_0,
+X0_lys
 ];
 
 %This functions is used to live track progress through integration.
@@ -293,7 +268,7 @@ p.IBMX = 0;   %PDE inhibitor concentration [uM]
 % Warning: Very short smoothed spikes may not reach full amplitude
 % Warning: protocol misspell leads to "value on the right hand side of assignment is undefined".
 
-p.stim_start = 100;%[ms]
+p.stim_start = 10000;%[ms]
 p.stim_2nd_start = 10000; %for two_spikes_smooth [ms]
 p.stim_period = 100; %For train_smooth [ms]
 
@@ -303,13 +278,14 @@ p.stim_k = 100000;
 
 p.extra_var = false(); %whether to calculate currents and fluxes, can be time consuming
 
-tspan = [0,200];
+tspan = [0,10300];
 pt_interval = 0.1;%[ms]
 
 %===============================================================================
 %Solver
-abstol_vect = 1e-9*ones(1,140); abstol_vect(79:140) = 1e-9; abstol_vect(78) = 1e-12;
-options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect,"NonNegative", 2:140, 'MaxStep', 0.5);
+%Might have to adjust tolerances for the lysosome model
+abstol_vect = 1e-9*ones(1,148); abstol_vect(79:140) = 1e-9; abstol_vect(78) = 1e-12;
+options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect,"NonNegative", 2:140, 'MaxStep', 1);
 options = odeset(options, 'OutputFcn', @(t,y,flag) progressBar(t,y,flag,tspan(2)));
 
 [t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);
