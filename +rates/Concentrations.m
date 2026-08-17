@@ -10,6 +10,11 @@ function dC = Concentrations(Ca, J, I, p)
   J_leak = J(4);
   J_up = J(5);
   J_trpn = J(6);
+  J_K = J(7);
+  J_Na = J(8);
+  J_Ca = J(11);
+  J_CAX = J(12);
+  J_Ca_trpml1 = J(13);
 
   I_cav_CaL = I(1);
   I_ecav_CaL = I(2);
@@ -34,7 +39,7 @@ function dC = Concentrations(Ca, J, I, p)
   B_ss = 1/(1 + p.CMDN_tot*p.Km_CMDN/(p.Km_CMDN+Ca_ss)^2);
   B_JSR = 1/(1 + p.CSQN_tot*p.Km_CSQN/(p.Km_CSQN+Ca_JSR)^2);
 
-  dCa_i = B_i*(J_leak + J_xfer - J_up - J_trpn - (I_Cab - 2*I_NaCa + I_pCa...
+  dCa_i = B_i*(J_leak + J_xfer - J_up - J_trpn - J_Ca - J_Ca_trpml1 - (I_Cab - 2*I_NaCa + I_pCa...
                 + I_cav_CaL)*(p.A_cap*p.C_m/(2*p.V_cyt*p.F)));
   dCa_ss = B_ss*(J_rel*p.V_JSR/p.V_ss - J_xfer*p.V_cyt/p.V_ss...
           - I_ecav_CaL*p.A_cap*p.C_m/(2*p.V_ss*p.F));
@@ -42,11 +47,11 @@ function dC = Concentrations(Ca, J, I, p)
   dCa_NSR = (J_up - J_leak)*p.V_cyt/p.V_NSR - J_tr*p.V_JSR/p.V_NSR;
 
   %Sodium
-  dNa_i = -(I_Na + I_Nab + 3*I_NaCa + 3*I_NaK)*p.A_cap*p.C_m/(p.V_cyt*p.F);
+  dNa_i = -(I_Na + I_Nab + 3*I_NaCa + 3*I_NaK)*p.A_cap*p.C_m/(p.V_cyt*p.F) - J_Na;
 
   %Potassium
   dK_i = -(I_Kto_f + I_Kto_s + I_Kur + I_Kss + I_K1 + I_Kr + I_Ks - 2*I_NaK)...
-            *p.A_cap*p.C_m/(p.V_cyt*p.F);
+            *p.A_cap*p.C_m/(p.V_cyt*p.F) - J_K;
 
   %Pack outputs
   dC = [dCa_i; dCa_ss; dCa_JSR; dCa_NSR; dNa_i; dK_i];

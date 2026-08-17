@@ -27,7 +27,7 @@ load("parameters.mat")
 
 
 %Set up lysosome model
-N_lys = 1;  %NBR of Lysosomes -> to set up later
+%N_lys = 1;  %NBR of Lysosomes -> to set up later
 init_Aeff = 0.30;
 init_Ca_F = 600; %uM
 init_Ca_T = 6000; %uM
@@ -253,7 +253,7 @@ end
 %=================================== Set up ====================================
 
 %Stimulation protocols:
-p.protocol = "spike_smooth";
+p.protocol = "none";
 p.L = 100;      %B_AR ligand concentration [uM]
 p.IBMX = 0;   %PDE inhibitor concentration [uM]
 
@@ -278,13 +278,13 @@ p.stim_k = 100000;
 
 p.extra_var = false(); %whether to calculate currents and fluxes, can be time consuming
 
-tspan = [0,10300];
+tspan = [0,100];
 pt_interval = 0.1;%[ms]
 
 %===============================================================================
 %Solver
 %Might have to adjust tolerances for the lysosome model
-abstol_vect = 1e-9*ones(1,148); abstol_vect(79:140) = 1e-9; abstol_vect(78) = 1e-12;
+abstol_vect = 1e-9*ones(1,148); abstol_vect(79:140) = 1e-9; abstol_vect(78) = 1e-12; abstol_vect(141:148) = 1e-6;
 options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect,"NonNegative", 2:140, 'MaxStep', 1);
 options = odeset(options, 'OutputFcn', @(t,y,flag) progressBar(t,y,flag,tspan(2)));
 
@@ -296,7 +296,7 @@ X_interp = interp1(t,X,tquery,'spline');  %spline assumes continuity, pchip does
 
 %Calculate and save the Currents and Fluxes at each timepoint
 if (p.extra_var == true())
-  I = zeros(size(tquery)(1), 15); J = zeros(size(tquery)(1), 6);
+  I = zeros(size(tquery)(1), 15); J = zeros(size(tquery)(1), 13);
   for k = 1:length(tquery)
     [~, I_k, J_k] = odes.odes(tquery(k), X_interp(k,:).', p);
     I(k,:) = I_k(:).';

@@ -87,15 +87,18 @@ function [dxdt, I, J] = odes(t, X, p)
   S_Lys = X(141:148);
 
 %============================== Lysosome =======================================
-  S_Lys = S_Lys + %All the cytoplasmic concentrations
-  dNLys = lys.modelLIH_RA2019(t,S_Lys,p);
+  S_Lys = [S_Lys; Ca_i; Na_i; K_i];
+  dNLys = lys.modelLIH_RA2019(S_Lys,p);
   %[dAeffdt; dNHdt; dpHdt; dNKdt; dNNadt; dNCldt; dNCaTdt ; dNCaFdt];
-  dH_lys = dNLys(2)/(p.NA*p.V_Lys);
-  dK_lys = dNLys(2)/(p.NA*p.V_Lys);
-  dNa_lys = dNLys(2)/(p.NA*p.V_Lys);
-  dCl_lys = dNLys(2)/(p.NA*p.V_Lys);
-  dCaT_lys = dNLys(2)/(p.NA*p.V_Lys);
-  dHCaF_lys = dNLys(2)/(p.NA*p.V_Lys);
+  dAeffdt = dNLys(1);
+  dH_lys = dNLys(2)/(p.NA*p.V_lys_uL);
+  dpHdt = dNLys(3);
+  dK_lys = dNLys(4)/(p.NA*p.V_lys_uL);
+  dNa_lys = dNLys(5)/(p.NA*p.V_lys_uL);
+  dCl_lys = dNLys(6)/(p.NA*p.V_lys_uL);
+  dCaT_lys = dNLys(7)/(p.NA*p.V_lys_uL);
+  dHCaF_lys = dNLys(8)/(p.NA*p.V_lys_uL);
+  J_Lys = dNLys(9:15);
 
 %============================== Signalling =====================================
 
@@ -202,14 +205,14 @@ function [dxdt, I, J] = odes(t, X, p)
 
   %Concentration changes and buffers
   Ca = [Ca_i; Ca_ss; Ca_JSR; Ca_NSR];
-  J = [J_rel; J_tr; J_xfer; J_leak; J_up; J_trpn];
+  J = [J_rel; J_tr; J_xfer; J_leak; J_up; J_trpn; J_Lys];
   I = [I_cav_CaL; I_ecav_CaL; I_Na; I_Kr; I_Kur; I_Kto_f; I_K1; I_Kss; I_NaK; I_pCa; I_NaCa; I_Cab; I_Nab; I_ClCa; I_stim];
   dC = rates.Concentrations(Ca, J, I, p);
 
   %membrane potential
   dV = -(I_CaL + I_pCa + I_NaCa + I_Cab + I_Na + I_Nab + I_NaK + I_Kto_f...
         + I_K1 + I_Kur + I_Kss + I_Kr + I_ClCa + I_stim)/p.C_m;
-
+  %disp(J)
   %Pack output
   dxdt = [
   dV;
@@ -231,7 +234,15 @@ function [dxdt, I, J] = odes(t, X, p)
   dS_LCC_ecav;
   dS_RyR;
   dS_Na;
-  dS_IKr
+  dS_IKr;
+  dAeffdt;
+  dH_lys;
+  dpHdt;
+  dK_lys;
+  dNa_lys;
+  dCl_lys;
+  dCaT_lys;
+  dHCaF_lys
   ];
 
 endfunction

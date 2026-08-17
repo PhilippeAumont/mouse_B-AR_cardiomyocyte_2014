@@ -1,9 +1,9 @@
-# Created by Octave 11.3.0, Fri Aug 14 14:48:22 2026 CEST
+# Created by Octave 11.3.0, Mon Aug 17 15:19:30 2026 CEST
 # name: p
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 75
+# length: 78
 # name: A_cap
 # type: scalar
 0.00015339999999999999
@@ -243,7 +243,7 @@ WT
 
 # name: NA
 # type: scalar
-6.0199999999999997e-17
+6.02e+17
 
 
 # name: NCX_Ca
@@ -331,11 +331,6 @@ WT
 40000
 
 
-# name: cap_0
-# type: scalar
-9.9999999999999995e-07
-
-
 # name: pH_C
 # type: scalar
 7.2000000000000002
@@ -374,6 +369,26 @@ WT
 # name: tau_deact
 # type: scalar
 250
+
+
+# name: V_lys_L
+# type: scalar
+4.9391999999999998e-14
+
+
+# name: V_lys_uL
+# type: scalar
+4.9391999999999997e-08
+
+
+# name: C_m_lys
+# type: scalar
+4.3499999999999999e-06
+
+
+# name: Cl_C
+# type: scalar
+10000
 
 
 # name: v_flux
