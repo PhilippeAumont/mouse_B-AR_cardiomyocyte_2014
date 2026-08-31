@@ -6,7 +6,7 @@ It should be in a directory with other directories such as +odes, +plotting and
 +rates. This allows it to call scripts/function from those files
 Refer to the original paper for details on parameters. I tried to stay as consistent
 with the notation as possible, expect when it was too verbose.
-The end of this files contains the settings to run simulations.
+The end of this file contains the settings to run simulations and instructions.
 Philippe Aumont
 Bondarenko VE (2014) A Compartmentalized Mathematical Model of the
 B1-Adrenergic Signaling System in Mouse Ventricular Myocytes. PLoS
@@ -24,7 +24,6 @@ Units
 %Parameters
 % %Cell Parameters
 load("parameters.mat")
-
 
 %Set up lysosome model
 %N_lys = 1;  %NBR of Lysosomes -> to set up later
@@ -53,7 +52,6 @@ X0_lys = [init_Aeff; init_H; init_pH; init_K; init_Na; init_Cl; init_Ca_T; init_
 %Initial Markov State conditions
 S_LCC_cav_0 = [
 0.320206e-11,   %O
-%0.973685,        %C1
 0.524483e-2,    %C2
 0.105944e-4,    %C3
 0.951124e-8,    %C4
@@ -74,7 +72,6 @@ S_LCC_cav_0 = [
 
 S_LCC_ecav_0 = [
 0.286851e-11,   %O
-%0.872261,        %C1
 0.469850e-2,    %C2
 0.949082e-5,    %C3
 0.852050e-8,    %C4
@@ -108,7 +105,6 @@ S_Na_0 = [
 0.367777e-6,    %O
 0.161178e-3,    %C1
 0.132248e-1,    %C2
-%0.436222,        %C3
 0.153271e-3,    %IF
 0.146044e-4,    %I1
 0.545874e-7,    %I2
@@ -127,7 +123,6 @@ S_Na_0 = [
 
 S_IKr_0 = [
 0.332600e-3,    %O
-%0.997365,        %C0
 0.135218e-2,    %C1
 0.873596e-3,    %C2
 0.763767e-4     %I
@@ -251,10 +246,12 @@ end
 
 
 %=================================== Set up ====================================
+%First run generate_parameters() in the terminal to create the parameters file.
+%Then fill out the setting below, and run this main file to run the simulation.
 
 %Stimulation protocols:
 p.protocol = "none";
-p.L = 100;      %B_AR ligand concentration [uM]
+p.L = 0;      %B_AR ligand concentration [uM]
 p.IBMX = 0;   %PDE inhibitor concentration [uM]
 
 % none: No stimulation
@@ -274,11 +271,11 @@ p.stim_period = 100; %For train_smooth [ms]
 
 p.stim_dur = 1;%[ms]
 p.stim_amp = -80;%[mV]
-p.stim_k = 100000;
+p.stim_k = 100000;    %Sharpness of the stimulation current curve
 
 p.extra_var = false(); %whether to calculate currents and fluxes, can be time consuming
 
-tspan = [0,100];
+tspan = [0,50];
 pt_interval = 0.1;%[ms]
 
 %===============================================================================
@@ -292,7 +289,7 @@ options = odeset(options, 'OutputFcn', @(t,y,flag) progressBar(t,y,flag,tspan(2)
 
 %Time point interpolation
 tquery = 0:pt_interval:tspan(2);
-X_interp = interp1(t,X,tquery,'spline');  %spline assumes continuity, pchip does not.
+X_interp = interp1(t,X,tquery,'spline');  %'spline' assumes continuity, 'pchip' does not.
 
 %Calculate and save the Currents and Fluxes at each timepoint
 if (p.extra_var == true())

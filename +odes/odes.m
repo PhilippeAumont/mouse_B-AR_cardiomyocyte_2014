@@ -91,14 +91,15 @@ function [dxdt, I, J] = odes(t, X, p)
   dNLys = lys.modelLIH_RA2019(S_Lys,p);
   %[dAeffdt; dNHdt; dpHdt; dNKdt; dNNadt; dNCldt; dNCaTdt ; dNCaFdt];
   dAeffdt = dNLys(1);
-  dH_lys = dNLys(2)/(p.NA*p.V_lys_uL);
+  dH_lys = dNLys(2)/(p.NA*p.V_lys_L);
   dpHdt = dNLys(3);
-  dK_lys = dNLys(4)/(p.NA*p.V_lys_uL);
-  dNa_lys = dNLys(5)/(p.NA*p.V_lys_uL);
-  dCl_lys = dNLys(6)/(p.NA*p.V_lys_uL);
-  dCaT_lys = dNLys(7)/(p.NA*p.V_lys_uL);
-  dHCaF_lys = dNLys(8)/(p.NA*p.V_lys_uL);
-  J_Lys = dNLys(9:15);
+  dK_lys = dNLys(4)/(p.NA*p.V_lys_L);
+  dNa_lys = dNLys(5)/(p.NA*p.V_lys_L);
+  dCl_lys = dNLys(6)/(p.NA*p.V_lys_L);
+  dCaT_lys = dNLys(7)/(p.NA*p.V_lys_L);
+  dHCaF_lys = dNLys(8)/(p.NA*p.V_lys_L);
+  J_Lys = dNLys(9:15)/(p.NA*p.V_cyt);
+%dxdt = [; J_K; J_Na; J_Cl_unc; J_CLC; J_Ca; J_CAX; J_Ca_trpml1];
 
 %============================== Signalling =====================================
 

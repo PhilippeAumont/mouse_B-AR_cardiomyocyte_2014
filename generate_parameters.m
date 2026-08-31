@@ -1,4 +1,5 @@
-function parameters_generator()
+function generate_parameters()
+%This file creates the file containing all parameters.
 
 p.A_cap = 1.534e-4;   %cm2
 p.V_cell = 38.00e-6;  %uL
@@ -13,6 +14,7 @@ p.V_ecav = 1.520e-06; %uL (4% of cell volume)
 p.K_o = 5400;      %uM
 p.Na_o = 140000;   %uM
 p.Ca_o = 1800;     %uM
+
 
 % %SR Parameters
 p.v1 = 4.5;          %1/ms %From RyR Module Parameters
@@ -51,38 +53,46 @@ p.Km_Cl = 10.0;        %uM
 p.E_Cl = -40;           %mV
 
 %%Lys parameters
-p.B = 81000; %uM
+p.B = 81000;           %uM
 p.CAX_Ca = 1;
 p.CAX_H = 3;
 p.CLC_Cl = 2;
 p.CLC_H = 1;
-p.CLC_type = 'WT';
-p.NA = 6.02e-17;  %1/umol
+p.NA = 6.02e17;       %1/umol
 p.NCX_Ca = 3;
 p.NCX_Na = 1;
 p.NHE_H = 1;
 p.NHE_Na = 1;
-p.N_CAX = 0;
+p.N_CAX = 100;
 p.N_CLC = 300;
 p.N_NCX = 0;
 p.N_NHE = 0;
 p.N_VATP = 300;
-p.P_H = 6e-8; %cm/ms
-p.P_Na = 9.6e-10;  %cm/ms
-p.P_K = 7.1e-10; %cm/ms
-p.P_Cl = 1.2e-8; %cm/ms
-p.P_Ca = 1.49e-10;%cm/ms
-p.RTF = 25.674; %mV or J*mmol/mol*C
-p.S = 1.45e-8;    %cm-2 1 lysosome surface area
-p.beta_pH = 40000; %uM/pH, proton buffering
+p.P_H = 6e-8;         %cm/ms
+p.P_Na = 9.6e-10;    %cm/ms
+p.P_K = 7.1e-10;     %cm/ms
+p.P_Cl = 1.2e-8;     %cm/ms
+p.P_Ca = 1.49e-10;   %cm/ms
+p.RTF = 25.674;       %mV or J*mmol/mol*C
+p.S = 1.45e-8;       %cm-2, surface area of 1 lysosome
+p.beta_pH = 40000;    %uM/pH, proton buffering
 p.pH_C = 7.2;
-p.psi_in = 0; %mV
-p.psi_out = -50; %mV
+p.psi_in = 0;          %mV
+p.psi_out = -50;       %mV
 p.q = 2.2;
 p.r = 0.1;
 p.p_trpml1 = 3.88e-9;
-p.tau_act = 1000; %ms
-p.tau_deact = 250; %ms
-p.V_lys = 1.6464e-16; %L volume of 1 lysosome
+p.tau_act = 1000;     %ms
+p.tau_deact = 250;    %ms
+N_lys = 300;
+V_single_lys = 1.6464e-16;    %L, volume of 1 lysosome
+p.V_lys_L = N_lys*V_single_lys;  %L
+p.V_lys_uL = p.V_lys_L*1e6;     %uL
+p.C_m_lys = p.C_m*p.S*N_lys;     %uF
+p.Cl_C = 10000;                %uM
+
+load('v_flux.mat');
+p.v_flux = v_flux/1000; %proton/ms
+
 save('parameters.mat', "p");
 endfunction
