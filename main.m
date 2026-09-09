@@ -27,26 +27,26 @@ load("parameters.mat")
 
 %Set up lysosome model
 %N_lys = 1;  %NBR of Lysosomes -> to set up later
+%
 init_Aeff = 0.30;
-init_Ca_F = 600; %uM
-init_Ca_T = 6000; %uM
-init_Cl = 1000; %uM
-init_H = 1; %uM -> Equivalent to pH 6
-init_K = 50000; %uM
-init_Na = 20000; %uM
-
-init_pH = 6;
-init_psi_total = 0; %mV
-%Initial conditions from initial model parameters.
+init_Ca_F = 1000; %uM
+init_Ca_T = 8000; %uM
+init_Cl = 147000; %uM
+init_H = 49000; %uM -> Equivalent to pH ?
+init_K = 154000; %uM
+init_Na = 11000; %uM
+init_pH = 4.787;
 %{
-init_NH = init_H*init_V*p.NA;       %H amount
-init_NK = init_K*init_V*p.NA;       %K amount
-init_NNa = init_Na*init_V*p.NA;     %Na amount
-init_NCl = init_Cl*init_V*p.NA;     %Cl amount
-init_NCa_T = init_Ca_T*init_V*p.NA; %Total Ca amount
-init_NCa_F = init_Ca_F*init_V*p.NA; %Free Ca amount
-X0_lys = [init_Aeff; init_NH; init_pH; init_NK; init_NNa; init_NCl; init_NCa_T ; init_NCa_F];
+init_Aeff = 0.30;
+init_Ca_F = 0.1*6e-3*1e6; %uM
+init_Ca_T = 6e-3*1e6; %uM
+init_Cl = 0.001*1e6; %uM
+init_H = 1000; %uM -> Equivalent to pH ?
+init_K = 0.05*1e6; %uM
+init_Na = 0.02*1e6; %uM
+init_pH = 6;
 %}
+
 X0_lys = [init_Aeff; init_H; init_pH; init_K; init_Na; init_Cl; init_Ca_T; init_Ca_F];
 
 %Initial Markov State conditions
@@ -93,7 +93,6 @@ S_LCC_ecav_0 = [
 S_RyR_0 = [
 0.854737e-5,    %O1
 0.360412e-10,   %O2
-%0.996216,        %C1
 0.961561e-4,    %C2
 0.526065e-7,    %O1-p
 0.369705e-12,   %O2-p
@@ -217,6 +216,8 @@ S_IKr_0,
 X0_lys
 ];
 
+%X0 = load("100s_vars.mat").ans(:);
+
 %This functions is used to live track progress through integration.
 function status = progressBar(t, y, flag, tf)
   persistent lastPercent tstart
@@ -275,14 +276,14 @@ p.stim_k = 100000;    %Sharpness of the stimulation current curve
 
 p.extra_var = false(); %whether to calculate currents and fluxes, can be time consuming
 
-tspan = [0,50];
+tspan = [0,1000];
 pt_interval = 0.1;%[ms]
 
 %===============================================================================
 %Solver
 %Might have to adjust tolerances for the lysosome model
 abstol_vect = 1e-9*ones(1,148); abstol_vect(79:140) = 1e-9; abstol_vect(78) = 1e-12; abstol_vect(141:148) = 1e-6;
-options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect,"NonNegative", 2:140, 'MaxStep', 1);
+options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect,"NonNegative", [2:148], 'MaxStep', 1);
 options = odeset(options, 'OutputFcn', @(t,y,flag) progressBar(t,y,flag,tspan(2)));
 
 [t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);

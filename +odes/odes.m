@@ -88,18 +88,8 @@ function [dxdt, I, J] = odes(t, X, p)
 
 %============================== Lysosome =======================================
   S_Lys = [S_Lys; Ca_i; Na_i; K_i];
-  dNLys = lys.modelLIH_RA2019(S_Lys,p);
-  %[dAeffdt; dNHdt; dpHdt; dNKdt; dNNadt; dNCldt; dNCaTdt ; dNCaFdt];
-  dAeffdt = dNLys(1);
-  dH_lys = dNLys(2)/(p.NA*p.V_lys_L);
-  dpHdt = dNLys(3);
-  dK_lys = dNLys(4)/(p.NA*p.V_lys_L);
-  dNa_lys = dNLys(5)/(p.NA*p.V_lys_L);
-  dCl_lys = dNLys(6)/(p.NA*p.V_lys_L);
-  dCaT_lys = dNLys(7)/(p.NA*p.V_lys_L);
-  dHCaF_lys = dNLys(8)/(p.NA*p.V_lys_L);
-  J_Lys = dNLys(9:15)/(p.NA*p.V_cyt);
-%dxdt = [; J_K; J_Na; J_Cl_unc; J_CLC; J_Ca; J_CAX; J_Ca_trpml1];
+  dLys = lys.modelLIH_RA2019(S_Lys,p);
+  J_Lys = dLys(9:15);
 
 %============================== Signalling =====================================
 
@@ -213,7 +203,7 @@ function [dxdt, I, J] = odes(t, X, p)
   %membrane potential
   dV = -(I_CaL + I_pCa + I_NaCa + I_Cab + I_Na + I_Nab + I_NaK + I_Kto_f...
         + I_K1 + I_Kur + I_Kss + I_Kr + I_ClCa + I_stim)/p.C_m;
-  %disp(J)
+
   %Pack output
   dxdt = [
   dV;
@@ -236,14 +226,7 @@ function [dxdt, I, J] = odes(t, X, p)
   dS_RyR;
   dS_Na;
   dS_IKr;
-  dAeffdt;
-  dH_lys;
-  dpHdt;
-  dK_lys;
-  dNa_lys;
-  dCl_lys;
-  dCaT_lys;
-  dHCaF_lys
+  dLys(1:8)
   ];
 
 endfunction
