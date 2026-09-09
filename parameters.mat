@@ -1,4 +1,4 @@
-# Created by Octave 11.3.0, Wed Sep 09 15:00:58 2026 CEST
+# Created by Octave 11.3.0, Wed Sep 09 16:43:45 2026 CEST
 # name: p
 # type: scalar struct
 # ndims: 2
@@ -111,7 +111,7 @@
 
 # name: F
 # type: scalar
-96485
+96.5
 
 
 # name: T
@@ -121,7 +121,7 @@
 
 # name: R
 # type: scalar
-0.34000000000000002
+8.3140000000000001
 
 
 # name: k_NaCa
@@ -236,6 +236,11 @@
 WT
 
 
+# name: F_Lys
+# type: scalar
+96485
+
+
 # name: NA
 # type: scalar
 6.02e+23
@@ -274,11 +279,6 @@ WT
 # name: beta_pH
 # type: scalar
 0.040000000000000001
-
-
-# name: cap
-# type: scalar
-1.4527e-17
 
 
 # name: cap_0

@@ -23,7 +23,7 @@ K_C = 0.145;
 #######################################3
 
 %Membrane Potential
-psi     = (p.F/(p.cap_0*p.S)*1000)*p.init_V*(H + K + Na - Cl + 2*Ca_T - p.B);
+psi     = (p.F_Lys/(p.cap_0*p.S)*1000)*p.init_V*(H + K + Na - Cl + 2*Ca_T - p.B);
 
 %Modified Cytoplasmic Surface Concentrations
 pH_C0   = (p.pH_C+p.psi_out/(p.RTF*2.3));
@@ -91,7 +91,7 @@ J_Ca   = p.P_Ca*p.S*(Ca_F_C0*exp(-2*psi/p.RTF)-Ca_F_L0)*gg_Ca*p.NA/1000;
 
 %TRPML1 channel
 y = 0.5 - 0.5*tanh((psi + 40)/15);
-dv = min(abs(psi+40), 200);
+dv = abs(psi+40)/((1 + (abs(psi+40)/200)^8)^(1/8));
 P_trpml1 = 3.88e-9*(y*abs(psi) + (1-y)*dv^3/(pH_L0^p.q));
 J_Ca_trpml1 = P_trpml1/1000*p.S*(Ca_F_C0*exp(-2*psi/p.RTF)-Ca_F_L0)*gg_Ca*p.NA/1000;
 
@@ -103,7 +103,7 @@ J_Ca_trpml1 = P_trpml1/1000*p.S*(Ca_F_C0*exp(-2*psi/p.RTF)-Ca_F_L0)*gg_Ca*p.NA/1
 dNHdt   = J_H + (J_VATPASE) - (p.CLC_H*J_CLC) - (p.CAX_H*J_CAX);
 dHdt  = dNHdt/(p.NA*p.init_V)*1e6; %uM
 
-dpHdt   = (-dNHdt/p.init_V/NA)/p.beta_pH;
+dpHdt   = (-dNHdt/p.init_V/p.NA)/p.beta_pH;
 
 dNKdt   = J_K;
 dKdt = dNKdt/(p.NA*p.init_V)*1e6;%uM
@@ -121,7 +121,7 @@ dNCaFdt = dNCaTdt*p.r;
 dCaFdt = dNCaFdt/(p.NA*p.init_V)*1e6;%uM
 
 J_N = [J_K; J_Na; J_Cl_unc; J_CLC; J_Ca; J_CAX; J_Ca_trpml1];
-J_uM = J_N/(p.NA*(p.V_cyt/1e6)); %Fluxes for cytoplasm
+J_uM = J_N/(p.NA*(p.V_cyt/1e6))*1e6; %Fluxes for cytoplasm
 
 
 %OUTPUT

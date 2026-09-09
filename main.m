@@ -34,14 +34,13 @@ init_Aeff = 0.30;
 init_Ca_T = 8000; %uM
 init_Ca_F = p.r*init_Ca_T; %uM
 init_Cl = 147000; %uM
-init_H = 10^(init_pH)*1e6;
-; %uM
+init_H = 10^(-init_pH)*1e6;
 init_K = 154000; %uM
 init_Na = 11000; %uM
 
 init_psi = 40;
-p.B = init_H/1e6 + init_K/1e6 + init_Na/1e6 - init_Cl/1e6 + 2*init_Ca_T/1e6...
-       - init_psi*p.cap_0/(p.F*p.init_V*1000);
+p.B = (init_H + init_K + init_Na - init_Cl + 2*init_Ca_T)/1e6...
+       - init_psi*(p.cap_0*p.S)/(p.F_Lys*p.init_V*1000);
 %{
 init_Aeff = 0.30;
 init_Ca_F = 0.1*6e-3*1e6; %uM
@@ -282,7 +281,7 @@ p.stim_k = 100000;    %Sharpness of the stimulation current curve
 
 p.extra_var = false(); %whether to calculate currents and fluxes, can be time consuming
 
-tspan = [0,100];
+tspan = [0,1000];
 pt_interval = 0.1;%[ms]
 
 %===============================================================================
