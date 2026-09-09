@@ -84,7 +84,7 @@ function [dxdt, I, J] = odes(t, X, p)
   S_RyR = X(113:119);
   S_Na = X(120:136);
   S_IKr = X(137:140);
-  S_Lys = X(141:148);
+  S_Lys = X(141:147);
 
 %============================== Lysosome =======================================
   S_Lys = [S_Lys; Ca_i; Na_i; K_i];
@@ -226,7 +226,7 @@ function [dxdt, I, J] = odes(t, X, p)
   dS_RyR;
   dS_Na;
   dS_IKr;
-  dLys(1:8)
+  dLys(1:7)
   ];
 
 endfunction

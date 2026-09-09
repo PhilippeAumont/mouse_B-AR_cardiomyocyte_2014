@@ -28,14 +28,20 @@ load("parameters.mat")
 %Set up lysosome model
 %N_lys = 1;  %NBR of Lysosomes -> to set up later
 %
+
+init_pH = 4.787;
 init_Aeff = 0.30;
-init_Ca_F = 1000; %uM
 init_Ca_T = 8000; %uM
+init_Ca_F = p.r*init_Ca_T; %uM
 init_Cl = 147000; %uM
-init_H = 49000; %uM -> Equivalent to pH ?
+init_H = 10^(init_pH)*1e6;
+; %uM
 init_K = 154000; %uM
 init_Na = 11000; %uM
-init_pH = 4.787;
+
+init_psi = 40;
+p.B = init_H/1e6 + init_K/1e6 + init_Na/1e6 - init_Cl/1e6 + 2*init_Ca_T/1e6...
+       - init_psi*p.cap_0/(p.F*p.init_V*1000);
 %{
 init_Aeff = 0.30;
 init_Ca_F = 0.1*6e-3*1e6; %uM
@@ -47,7 +53,7 @@ init_Na = 0.02*1e6; %uM
 init_pH = 6;
 %}
 
-X0_lys = [init_Aeff; init_H; init_pH; init_K; init_Na; init_Cl; init_Ca_T; init_Ca_F];
+X0_lys = [init_Aeff; init_H; init_pH; init_K; init_Na; init_Cl; init_Ca_T];
 
 %Initial Markov State conditions
 S_LCC_cav_0 = [
@@ -276,14 +282,14 @@ p.stim_k = 100000;    %Sharpness of the stimulation current curve
 
 p.extra_var = false(); %whether to calculate currents and fluxes, can be time consuming
 
-tspan = [0,1000];
+tspan = [0,100];
 pt_interval = 0.1;%[ms]
 
 %===============================================================================
 %Solver
 %Might have to adjust tolerances for the lysosome model
-abstol_vect = 1e-9*ones(1,148); abstol_vect(79:140) = 1e-9; abstol_vect(78) = 1e-12; abstol_vect(141:148) = 1e-6;
-options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect,"NonNegative", [2:148], 'MaxStep', 1);
+abstol_vect = 1e-9*ones(1,147); abstol_vect(79:140) = 1e-9; abstol_vect(78) = 1e-12; abstol_vect(141:147) = 1e-6;
+options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect,"NonNegative", [2:147], 'MaxStep', 1);
 options = odeset(options, 'OutputFcn', @(t,y,flag) progressBar(t,y,flag,tspan(2)));
 
 [t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);

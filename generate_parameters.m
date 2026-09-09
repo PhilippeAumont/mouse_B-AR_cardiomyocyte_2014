@@ -53,52 +53,38 @@ p.Km_Cl = 10.0;        %uM
 p.E_Cl = -40;           %mV
 
 %%Lys parameters
-p.B = 0.081;           %M
 p.CAX_Ca = 1;
 p.CAX_H = 3;
 p.CLC_Cl = 2;
 p.CLC_H = 1;
-p.NA = 6.02e17;       %1/umol
-p.NCX_Ca = 3;
-p.NCX_Na = 1;
-p.NHE_H = 1;
-p.NHE_Na = 1;
-p.N_CAX = 100;
-p.N_CLC = 300;
-p.N_NCX = 0;
-p.N_NHE = 0;
-p.N_VATP = 300;
-p.P_H = 6e-8;         %cm/ms
-p.P_Na = 9.6e-10;    %cm/ms
-p.P_K = 7.1e-10;     %cm/ms
-p.P_Cl = 1.2e-8;     %cm/ms
-p.P_Ca = 1.49e-10;   %cm/ms
-p.RTF = 25.674;       %mV or J*mmol/mol*C
-p.S = 1.45e-8;       %cm-2, surface area of 1 lysosome
-p.beta_pH = 0.04;    %M/pH, proton buffering
+p.CLC_type = 'WT';
+p.F = 96485;  %C/mol
+p.NA = 6.02e23; %u/mol
+p.P_Ca = 1.49e-10;  %cm/ms
+p.P_Cl = 1.2e-8;  %cm/ms
+p.P_H = 6e-8; %cm/ms
+p.P_K = 7.1e-10; %cm/ms
+p.P_Na = 9.6e-10; %cm/ms
+p.R = 0.34;
+p.RTF = 25.690;
+p.beta_pH = 0.04;
+p.cap = 1.4527e-17;
+p.cap_0 = 1e-6;       %F/cm2
 p.pH_C = 7.2;
-p.psi_in = 0;          %mV
-p.psi_out = -50;       %mV
+p.psi_in = 0;   %mV
+p.psi_out = -50;    %mV
 p.q = 2.2;
 p.r = 0.1;
-p.p_trpml1 = 3.88e-9;
-p.tau_act = 1000;     %ms
+p.tau_act = 1000;   %ms
 p.tau_deact = 250;    %ms
-p.N_lys = 1;
-V_single_lys = 1.6464e-16;    %L, volume of 1 lysosome
-p.V_lys_L = p.N_lys*V_single_lys;  %L
-p.V_lys_uL = p.V_lys_L*1e6;     %uL
-p.C_m_lys = p.C_m*p.S*p.N_lys;     %uF
-p.Cl_C = 0.01;                %M
+p.Cl_C = 0.01;    %M
 
-#test
-p.cap = 1.4527e-14;   %
-p.F_lys = 96485;    %C/mol
-p.NA_lys = 6.02e23;
-p.R_lys = 0.34;
-p.cap_0 = 1e-6;
-
-
+N_Lys = 1;
+p.init_V = 1.6464e-16*N_Lys;    %L
+p.S = 1.4527e-8*N_Lys;    %cm2
+p.N_CAX = 10*N_Lys;
+p.N_CLC = 300*N_Lys;
+p.N_VATP = 300*N_Lys;
 
 
 load('v_flux.mat');

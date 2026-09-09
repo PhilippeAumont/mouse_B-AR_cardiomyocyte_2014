@@ -1,9 +1,9 @@
-# Created by Octave 11.3.0, Fri Sep 04 16:34:00 2026 CEST
+# Created by Octave 11.3.0, Wed Sep 09 15:00:58 2026 CEST
 # name: p
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 83
+# length: 70
 # name: A_cap
 # type: scalar
 0.00015339999999999999
@@ -111,7 +111,7 @@
 
 # name: F
 # type: scalar
-96.5
+96485
 
 
 # name: T
@@ -121,7 +121,7 @@
 
 # name: R
 # type: scalar
-8.3140000000000001
+0.34000000000000002
 
 
 # name: k_NaCa
@@ -209,11 +209,6 @@
 -40
 
 
-# name: B
-# type: scalar
-0.081000000000000003
-
-
 # name: CAX_Ca
 # type: scalar
 1
@@ -234,74 +229,16 @@
 1
 
 
+# name: CLC_type
+# type: sq_string
+# elements: 1
+# length: 2
+WT
+
+
 # name: NA
 # type: scalar
-6.02e+17
-
-
-# name: NCX_Ca
-# type: scalar
-3
-
-
-# name: NCX_Na
-# type: scalar
-1
-
-
-# name: NHE_H
-# type: scalar
-1
-
-
-# name: NHE_Na
-# type: scalar
-1
-
-
-# name: N_CAX
-# type: scalar
-100
-
-
-# name: N_CLC
-# type: scalar
-300
-
-
-# name: N_NCX
-# type: scalar
-0
-
-
-# name: N_NHE
-# type: scalar
-0
-
-
-# name: N_VATP
-# type: scalar
-300
-
-
-# name: P_H
-# type: scalar
-5.9999999999999995e-08
-
-
-# name: P_Na
-# type: scalar
-9.5999999999999999e-10
-
-
-# name: P_K
-# type: scalar
-7.1000000000000003e-10
-
-
-# name: P_Cl
-# type: scalar
-1.2e-08
+6.02e+23
 
 
 # name: P_Ca
@@ -309,19 +246,44 @@
 1.49e-10
 
 
+# name: P_Cl
+# type: scalar
+1.2e-08
+
+
+# name: P_H
+# type: scalar
+5.9999999999999995e-08
+
+
+# name: P_K
+# type: scalar
+7.1000000000000003e-10
+
+
+# name: P_Na
+# type: scalar
+9.5999999999999999e-10
+
+
 # name: RTF
 # type: scalar
-25.673999999999999
-
-
-# name: S
-# type: scalar
-1.4500000000000001e-08
+25.690000000000001
 
 
 # name: beta_pH
 # type: scalar
 0.040000000000000001
+
+
+# name: cap
+# type: scalar
+1.4527e-17
+
+
+# name: cap_0
+# type: scalar
+9.9999999999999995e-07
 
 
 # name: pH_C
@@ -349,11 +311,6 @@
 0.10000000000000001
 
 
-# name: p_trpml1
-# type: scalar
-3.8799999999999998e-09
-
-
 # name: tau_act
 # type: scalar
 1000
@@ -364,54 +321,34 @@
 250
 
 
-# name: N_lys
-# type: scalar
-1
-
-
-# name: V_lys_L
-# type: scalar
-1.6464e-16
-
-
-# name: V_lys_uL
-# type: scalar
-1.6463999999999999e-10
-
-
-# name: C_m_lys
-# type: scalar
-1.4500000000000001e-08
-
-
 # name: Cl_C
 # type: scalar
 0.01
 
 
-# name: cap
+# name: init_V
 # type: scalar
-1.4527e-14
+1.6464e-16
 
 
-# name: F_lys
+# name: S
 # type: scalar
-96485
+1.4527e-08
 
 
-# name: NA_lys
+# name: N_CAX
 # type: scalar
-6.02e+23
+10
 
 
-# name: R_lys
+# name: N_CLC
 # type: scalar
-0.34000000000000002
+300
 
 
-# name: cap_0
+# name: N_VATP
 # type: scalar
-9.9999999999999995e-07
+300
 
 
 # name: v_flux
