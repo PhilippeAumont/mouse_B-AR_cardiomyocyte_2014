@@ -74,7 +74,7 @@ elseif strcmp(p.CLC_type,'WT')
     end
 
     dAeffdt   = (1/tau)*(A - Aeff);
-    J_CLC    = p.N_CLC*Aeff*CLC_mu;
+    J_CLC    = p.N_CLC*Aeff*CLC_mu/1000;
 
 end
 

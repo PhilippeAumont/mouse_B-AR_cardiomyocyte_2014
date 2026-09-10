@@ -26,32 +26,31 @@ Units
 load("parameters.mat")
 
 %Set up lysosome model
-%N_lys = 1;  %NBR of Lysosomes -> to set up later
-%
+%{
 
 init_pH = 4.787;
 init_Aeff = 0.30;
 init_Ca_T = 8000; %uM
 init_Ca_F = p.r*init_Ca_T; %uM
 init_Cl = 147000; %uM
-init_H = 10^(-init_pH)*1e6;
+init_H = 0;
 init_K = 154000; %uM
 init_Na = 11000; %uM
 
-init_psi = 40;
-p.B = (init_H + init_K + init_Na - init_Cl + 2*init_Ca_T)/1e6...
-       - init_psi*(p.cap_0*p.S)/(p.F_Lys*p.init_V*1000);
-%{
+
+%}
 init_Aeff = 0.30;
 init_Ca_F = 0.1*6e-3*1e6; %uM
 init_Ca_T = 6e-3*1e6; %uM
 init_Cl = 0.001*1e6; %uM
-init_H = 1000; %uM -> Equivalent to pH ?
+init_H = 0; %uM -> Equivalent to pH ?
 init_K = 0.05*1e6; %uM
 init_Na = 0.02*1e6; %uM
 init_pH = 6;
-%}
+%
 
+init_psi = 50;
+p.B = 0.0809542751;
 X0_lys = [init_Aeff; init_H; init_pH; init_K; init_Na; init_Cl; init_Ca_T];
 
 %Initial Markov State conditions

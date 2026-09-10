@@ -10,6 +10,7 @@ p.V_ss = 1.485e-9;    %uL
 p.V_cav = 7.600e-07;  %uL (2% of cell volume)
 p.V_ecav = 1.520e-06; %uL (4% of cell volume)
 
+
 % %Extracellular Ion concentrations
 p.K_o = 5400;      %uM
 p.Na_o = 140000;   %uM
@@ -78,10 +79,10 @@ p.tau_deact = 250;    %ms
 p.Cl_C = 0.01;    %M
 
 N_Lys = 1;
-p.init_V = 1.6464e-16*N_Lys;    %L
-p.S = 1.4527e-8*N_Lys;    %cm2
-p.N_CAX = 10*N_Lys;
-p.N_CLC = 300*N_Lys;
+p.init_V = 1.64636595e-16*N_Lys;    %L
+p.S = 1.45267584e-8*N_Lys;    %cm2
+p.N_CAX = 300*N_Lys;
+p.N_CLC = 100*N_Lys;
 p.N_VATP = 300*N_Lys;
 
 
