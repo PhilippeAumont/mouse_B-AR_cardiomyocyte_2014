@@ -26,19 +26,6 @@ Units
 load("parameters.mat")
 
 %Set up lysosome model
-%{
-
-init_pH = 4.787;
-init_Aeff = 0.30;
-init_Ca_T = 8000; %uM
-init_Ca_F = p.r*init_Ca_T; %uM
-init_Cl = 147000; %uM
-init_H = 0;
-init_K = 154000; %uM
-init_Na = 11000; %uM
-
-
-%}
 init_Aeff = 0.30;
 init_Ca_F = 0.1*6e-3*1e6; %uM
 init_Ca_T = 6e-3*1e6; %uM
@@ -47,7 +34,6 @@ init_H = 0; %uM -> Equivalent to pH ?
 init_K = 0.05*1e6; %uM
 init_Na = 0.02*1e6; %uM
 init_pH = 6;
-%
 
 init_psi = 50;
 p.B = 0.0809542751;
@@ -217,12 +203,13 @@ S_LCC_ecav_0,
 S_RyR_0,
 S_Na_0,
 S_IKr_0,
-X0_lys
+X0_lys,
+0.100157,       %microdomain Ca (Ca_md)
 ];
 
 %X0 = load("100s_vars.mat").ans(:);
 
-%This functions is used to live track progress through integration.
+%This functions is used to live track progress.
 function status = progressBar(t, y, flag, tf)
   persistent lastPercent tstart
   switch flag
@@ -256,38 +243,49 @@ end
 
 %Stimulation protocols:
 p.protocol = "none";
-p.L = 0;      %B_AR ligand concentration [uM]
+p.NAADP_protocol = "sig";
+p.L = 0;      %B_AR ligand (ISO) concentration [uM]
 p.IBMX = 0;   %PDE inhibitor concentration [uM]
 
-% none: No stimulation
-% spike_smooth: sigmoidal spike. Needed: start, dur, amp, k
-% two_spikes_smooth: two single spikes. Needed: start, 2nd_start, dur, amp, k
-% train_smooth: regular smoothed spikes. Needed: start, period, dur, amp, k
-%
-%
-% k: sharpness of the smoothed curve
-% Warning: Non-smooth protocols may cause integration failures.
-% Warning: Very short smoothed spikes may not reach full amplitude
-% Warning: protocol misspell leads to "value on the right hand side of assignment is undefined".
+%{
+Patch-clamp protocols:
+- none: No stimulation
+- spike: sigmoidal spike. Needed: start, dur, amp, k
+- two_spikes: two single spikes. Needed: start, 2nd_start, dur, amp, k
+- train: regular smoothed spikes. Needed: start, period, dur, amp, k
 
-p.stim_start = 10000;%[ms]
+NAADP protocols:
+- none: No NAADP
+- sig: sigmoidal increase
+- spike: NAADP spike
+Warning: Very short smoothed spikes may not reach full amplitude
+Warning: protocol misspell leads to "value on the right hand side of assignment is undefined".
+%}
+p.stim_start = 1000;%[ms]
 p.stim_2nd_start = 10000; %for two_spikes_smooth [ms]
 p.stim_period = 100; %For train_smooth [ms]
-
 p.stim_dur = 1;%[ms]
 p.stim_amp = -80;%[mV]
 p.stim_k = 100000;    %Sharpness of the stimulation current curve
 
+p.NAADP_C = 0.03;%[uM]
+
+p.NAADP_k1 = 0.01;%Used for sig - if == 1, whole switch happens within 20 ms. If 10, about 1 ms
+p.NAADP_t0 = 1000;%[ms], midpoint of the curve
+p.NAADP_k2 = 100; %Used for spike
+p.NAADP_stim_start = 1000; %[ms]
+p.NAADP_stim_dur = 10;%[ms]
+
 p.extra_var = false(); %whether to calculate currents and fluxes, can be time consuming
 
-tspan = [0,1000];
+tspan = [0,2000];
 pt_interval = 0.1;%[ms]
 
 %===============================================================================
 %Solver
 %Might have to adjust tolerances for the lysosome model
-abstol_vect = 1e-9*ones(1,147); abstol_vect(79:140) = 1e-9; abstol_vect(78) = 1e-12; abstol_vect(141:147) = 1e-6;
-options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect,"NonNegative", [2:147], 'MaxStep', 1);
+abstol_vect = 1e-9*ones(1,148); abstol_vect(79:140) = 1e-9; abstol_vect(78) = 1e-12; abstol_vect(141:147) = 1e-6;
+options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect,"NonNegative", [2:148], 'MaxStep', 1);
 options = odeset(options, 'OutputFcn', @(t,y,flag) progressBar(t,y,flag,tspan(2)));
 
 [t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);
@@ -298,7 +296,7 @@ X_interp = interp1(t,X,tquery,'spline');  %'spline' assumes continuity, 'pchip' 
 
 %Calculate and save the Currents and Fluxes at each timepoint
 if (p.extra_var == true())
-  I = zeros(size(tquery)(1), 15); J = zeros(size(tquery)(1), 13);
+  I = zeros(size(tquery)(1), 15); J = zeros(size(tquery)(1), 14);
   for k = 1:length(tquery)
     [~, I_k, J_k] = odes.odes(tquery(k), X_interp(k,:).', p);
     I(k,:) = I_k(:).';

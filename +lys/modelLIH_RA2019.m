@@ -10,15 +10,13 @@ Cl     = X(6)/1e6;
 Ca_T   = X(7)/1e6;
 %Ca_F   = X(8)/1e6;
 Ca_F = p.r*Ca_T;
-%
+
 Ca_C   = X(8)/1e6;
 Na_C   = X(9)/1e6;
 K_C    = X(10)/1e6;
-%{
-Ca_C = 1e-7;
-Na_C = 0.01;
-K_C = 0.145;
-%}
+Ca_md = X(11)/1e6;
+NAADP = X(12);
+
 
 #######################################3
 
@@ -31,6 +29,7 @@ K_C0    = K_C*exp(-p.psi_out/p.RTF);
 Na_C0   = Na_C*exp(-p.psi_out/p.RTF);
 Cl_C0   = p.Cl_C*exp(p.psi_out/p.RTF);
 Ca_F_C0 = Ca_C*exp(-2*p.psi_out/p.RTF);
+Ca_md_C0 = Ca_md*exp(-2*p.psi_out/p.RTF);
 
 %Modified Luminal Surface Concentrations
 pH_L0   = (pH+p.psi_in/(p.RTF*2.3));
@@ -89,12 +88,16 @@ J_Na   = p.P_Na*p.S*(Na_C0*exp(-psi/p.RTF)-Na_L0)*gg*p.NA/1000;
 J_Cl_unc   = p.P_Cl*p.S*(Cl_C0-Cl_L0*exp(-psi/p.RTF))*gg*p.NA/1000;
 J_Ca   = p.P_Ca*p.S*(Ca_F_C0*exp(-2*psi/p.RTF)-Ca_F_L0)*gg_Ca*p.NA/1000;
 
-%TRPML1 channel
+%TRPML1 channel - REVIEW TO MAKE RELEVANT
+%{
 y = 0.5 - 0.5*tanh((psi + 40)/15);
 dv = abs(psi+40)/((1 + (abs(psi+40)/200)^8)^(1/8));
 P_trpml1 = 3.88e-9*(y*abs(psi) + (1-y)*dv^3/(pH_L0^p.q));
-J_Ca_trpml1 = P_trpml1/1000*p.S*(Ca_F_C0*exp(-2*psi/p.RTF)-Ca_F_L0)*gg_Ca*p.NA/1000;
-
+#Adjust below to run
+J_Ca_trpml1 = 0.001* P_trpml1/1000*p.S*(Ca_md_C0*exp(-2*psi/p.RTF)-Ca_F_L0)*gg_Ca*p.NA/1000;
+%}
+f_NAADP = (NAADP^p.n_TPC/(p.Ka_TPC^p.n_TPC + NAADP^p.n_TPC));
+J_Ca_trpml1 = p.v_TPC*f_NAADP*(Ca_md_C0*exp(-2*psi/p.RTF)-Ca_F_L0)*gg_Ca*p.NA/1000;
 ###############################################
 
 
@@ -121,8 +124,8 @@ dNCaFdt = dNCaTdt*p.r;
 dCaFdt = dNCaFdt/(p.NA*p.init_V)*1e6;%uM
 
 J_N = [J_K; J_Na; J_Cl_unc; J_CLC; J_Ca; J_CAX; J_Ca_trpml1];
-J_uM = J_N/(p.NA*(p.V_cyt/1e6))*1e6; %Fluxes for cytoplasm
-
+J_uM = [J_N(1:6)/(p.NA*(p.V_cyt/1e6))*1e6; J_N(7)/(p.NA*(p.V_md/1e6))*1e6];   %Fluxes for cytoplasm
+J_uM(7)
 
 %OUTPUT
 dxdt = [dAeffdt; dHdt; dpHdt; dKdt; dNadt; dCldt; dCaTdt ; dCaFdt; J_uM];

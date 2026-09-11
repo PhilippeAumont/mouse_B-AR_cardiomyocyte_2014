@@ -1,9 +1,9 @@
-# Created by Octave 11.3.0, Thu Sep 10 15:35:19 2026 CEST
+# Created by Octave 11.3.0, Fri Sep 11 15:00:53 2026 CEST
 # name: p
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 70
+# length: 74
 # name: A_cap
 # type: scalar
 0.00015339999999999999
@@ -42,6 +42,11 @@
 # name: V_ecav
 # type: scalar
 1.5200000000000001e-06
+
+
+# name: V_md
+# type: scalar
+3.1101000000000003e-09
 
 
 # name: K_o
@@ -328,27 +333,42 @@ WT
 
 # name: init_V
 # type: scalar
-1.64636595e-16
+4.9390978499999996e-14
 
 
 # name: S
 # type: scalar
-1.4526758400000001e-08
+4.3580275200000003e-06
 
 
 # name: N_CAX
 # type: scalar
-300
+90000
 
 
 # name: N_CLC
 # type: scalar
-50
+30000
 
 
 # name: N_VATP
 # type: scalar
-600
+90000
+
+
+# name: n_TPC
+# type: scalar
+1
+
+
+# name: v_TPC
+# type: scalar
+9.9999999999999994e-12
+
+
+# name: Ka_TPC
+# type: scalar
+0.029999999999999999
 
 
 # name: v_flux

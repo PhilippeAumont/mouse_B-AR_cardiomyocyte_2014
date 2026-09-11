@@ -85,14 +85,15 @@ function [dxdt, I, J] = odes(t, X, p)
   S_Na = X(120:136);
   S_IKr = X(137:140);
   S_Lys = X(141:147);
+  Ca_md = X(148);
 
 %============================== Lysosome =======================================
-  S_Lys = [S_Lys; Ca_i; Na_i; K_i];
+  NAADP = odes.NAADP(t,p);
+  S_Lys = [S_Lys; Ca_i; Na_i; K_i; Ca_md; NAADP];
   dLys = lys.modelLIH_RA2019(S_Lys,p);
   J_Lys = dLys(9:15);
 
 %============================== Signalling =====================================
-
   C = [C_cav; C_ecav; C_cyt];
   cAMP = [cAMP_cav; cAMP_ecav; cAMP_cyt];
 
@@ -184,6 +185,7 @@ function [dxdt, I, J] = odes(t, X, p)
   J_rel = p.v1*(S_RyR(1)+S_RyR(2)+S_RyR(4)+S_RyR(5))*(Ca_JSR-Ca_ss*P_RyR);
   J_tr = (Ca_NSR - Ca_JSR)/p.t_tr;
   J_xfer = (Ca_ss - Ca_i)/p.t_xfer;
+  J_xfer_md = (Ca_md - Ca_i)/p.t_xfer;
   J_leak = p.v2*(Ca_NSR - Ca_i);
   J_up = p.v3*Ca_i^2/(Km_up^2 + Ca_i^2);
   J_trpn = 2.37e-3*Ca_i*(140.0-HTRPNCa) - 3.2e-5*HTRPNCa + 0.0327*Ca_i*(70.0 - LTRPNCa)...
@@ -195,8 +197,8 @@ function [dxdt, I, J] = odes(t, X, p)
   I_stim = odes.I_stim(t,p);
 
   %Concentration changes and buffers
-  Ca = [Ca_i; Ca_ss; Ca_JSR; Ca_NSR];
-  J = [J_rel; J_tr; J_xfer; J_leak; J_up; J_trpn; J_Lys];
+  Ca = [Ca_i; Ca_ss; Ca_JSR; Ca_NSR; Ca_md];
+  J = [J_rel; J_tr; J_xfer; J_leak; J_up; J_trpn; J_Lys; J_xfer_md];
   I = [I_cav_CaL; I_ecav_CaL; I_Na; I_Kr; I_Kur; I_Kto_f; I_K1; I_Kss; I_NaK; I_pCa; I_NaCa; I_Cab; I_Nab; I_ClCa; I_stim];
   dC = rates.Concentrations(Ca, J, I, p);
 
@@ -226,7 +228,8 @@ function [dxdt, I, J] = odes(t, X, p)
   dS_RyR;
   dS_Na;
   dS_IKr;
-  dLys(1:7)
+  dLys(1:7);
+  dC(7);
   ];
 
 endfunction

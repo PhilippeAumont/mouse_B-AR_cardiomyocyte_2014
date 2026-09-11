@@ -1,6 +1,8 @@
 function generate_parameters()
 %This file creates the file containing all parameters.
 
+N_Lys = 300;
+
 p.A_cap = 1.534e-4;   %cm2
 p.V_cell = 38.00e-6;  %uL
 p.V_cyt = 25.84e-6;   %uL
@@ -10,6 +12,8 @@ p.V_ss = 1.485e-9;    %uL
 p.V_cav = 7.600e-07;  %uL (2% of cell volume)
 p.V_ecav = 1.520e-06; %uL (4% of cell volume)
 
+%Figure out below
+p.V_md = 1.0367e-11*N_Lys; %uL (cylinder with r=100nm and h=3.3nm)
 
 % %Extracellular Ion concentrations
 p.K_o = 5400;      %uM
@@ -78,12 +82,15 @@ p.tau_act = 1000;   %ms
 p.tau_deact = 250;    %ms
 p.Cl_C = 0.01;    %M
 
-N_Lys = 1;
 p.init_V = 1.64636595e-16*N_Lys;    %L
 p.S = 1.45267584e-8*N_Lys;    %cm2
 p.N_CAX = 300*N_Lys;
 p.N_CLC = 100*N_Lys;
 p.N_VATP = 300*N_Lys;
+
+p.n_TPC = 1;
+p.v_TPC = 1e-11; %uM/ms
+p.Ka_TPC = 0.03; %uM, so about 30 nM
 
 
 load('v_flux.mat');
