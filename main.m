@@ -23,7 +23,7 @@ Units
 
 %Parameters
 % %Cell Parameters
-load("parameters.mat")
+load("parameters.mat");
 
 %Set up lysosome model
 init_Aeff = 0.30;
@@ -117,6 +117,15 @@ S_IKr_0 = [
 0.763767e-4     %I
 ];
 
+S_RyR_md_0 = [
+0.854737e-5,    %O1
+0.360412e-10,   %O2
+0.961561e-4,    %C2
+0.526065e-7,    %O1-p
+0.369705e-12,   %O2-p
+0.367832e-2,    %C1-p
+0.986431e-6     %C2-p
+];
 
 %Initial Conditions
 X0 = [
@@ -205,6 +214,7 @@ S_Na_0,
 S_IKr_0,
 X0_lys,
 0.100157,       %microdomain Ca (Ca_md)
+S_RyR_md_0
 ];
 
 %X0 = load("100s_vars.mat").ans(:);
@@ -244,6 +254,7 @@ end
 %Stimulation protocols:
 p.protocol = "none";
 p.NAADP_protocol = "sig";
+p.OCaR = 0.95;   %TPC control by OCaR. Scalar controlling J_TPC.
 p.L = 0;      %B_AR ligand (ISO) concentration [uM]
 p.IBMX = 0;   %PDE inhibitor concentration [uM]
 
@@ -278,14 +289,14 @@ p.NAADP_stim_dur = 10;%[ms]
 
 p.extra_var = false(); %whether to calculate currents and fluxes, can be time consuming
 
-tspan = [0,2000];
+tspan = [0,3000];
 pt_interval = 0.1;%[ms]
 
 %===============================================================================
 %Solver
 %Might have to adjust tolerances for the lysosome model
-abstol_vect = 1e-9*ones(1,148); abstol_vect(79:140) = 1e-9; abstol_vect(78) = 1e-12; abstol_vect(141:147) = 1e-6;
-options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect,"NonNegative", [2:148], 'MaxStep', 1);
+abstol_vect = 1e-9*ones(1,155); abstol_vect(79:140) = 1e-9; abstol_vect(78) = 1e-12; abstol_vect(141:147) = 1e-6;
+options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect,"NonNegative", [2:155], 'MaxStep', 1);
 options = odeset(options, 'OutputFcn', @(t,y,flag) progressBar(t,y,flag,tspan(2)));
 
 [t,X] = ode15s(@(t,x) odes.odes(t,x,p), tspan, X0, options);
@@ -296,7 +307,7 @@ X_interp = interp1(t,X,tquery,'spline');  %'spline' assumes continuity, 'pchip' 
 
 %Calculate and save the Currents and Fluxes at each timepoint
 if (p.extra_var == true())
-  I = zeros(size(tquery)(1), 15); J = zeros(size(tquery)(1), 14);
+  I = zeros(size(tquery)(1), 15); J = zeros(size(tquery)(1), 15);
   for k = 1:length(tquery)
     [~, I_k, J_k] = odes.odes(tquery(k), X_interp(k,:).', p);
     I(k,:) = I_k(:).';

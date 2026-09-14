@@ -13,7 +13,7 @@ p.V_cav = 7.600e-07;  %uL (2% of cell volume)
 p.V_ecav = 1.520e-06; %uL (4% of cell volume)
 
 %Figure out below
-p.V_md = 1.0367e-11*N_Lys; %uL (cylinder with r=100nm and h=3.3nm)
+p.V_md = 1.0367e-12*N_Lys; %uL (cylinder with r=100nm and h=3.3nm) Is not that right now
 
 % %Extracellular Ion concentrations
 p.K_o = 5400;      %uM
