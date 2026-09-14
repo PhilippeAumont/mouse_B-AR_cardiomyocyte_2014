@@ -1,9 +1,9 @@
-# Created by Octave 11.3.0, Fri Sep 11 15:00:53 2026 CEST
+# Created by Octave 11.3.0, Mon Sep 14 15:23:53 2026 CEST
 # name: p
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 74
+# length: 75
 # name: A_cap
 # type: scalar
 0.00015339999999999999
@@ -46,7 +46,7 @@
 
 # name: V_md
 # type: scalar
-3.1101000000000003e-09
+3.1100999999999999e-10
 
 
 # name: K_o
@@ -329,6 +329,11 @@ WT
 # name: Cl_C
 # type: scalar
 0.01
+
+
+# name: B
+# type: scalar
+0.0809542751
 
 
 # name: init_V

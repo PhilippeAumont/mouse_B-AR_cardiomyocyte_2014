@@ -81,6 +81,7 @@ p.r = 0.1;
 p.tau_act = 1000;   %ms
 p.tau_deact = 250;    %ms
 p.Cl_C = 0.01;    %M
+p.B = 0.0809542751;
 
 p.init_V = 1.64636595e-16*N_Lys;    %L
 p.S = 1.45267584e-8*N_Lys;    %cm2

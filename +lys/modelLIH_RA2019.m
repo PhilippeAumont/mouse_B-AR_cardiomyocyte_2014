@@ -87,7 +87,7 @@ J_Ca   = p.P_Ca*p.S*(Ca_F_C0*exp(-2*psi/p.RTF)-Ca_F_L0)*gg_Ca*p.NA/1000;
 
 %TPC Channel
 f_NAADP = (NAADP^p.n_TPC/(p.Ka_TPC^p.n_TPC + NAADP^p.n_TPC));
-J_Ca_trpml1 = p.OCaR*p.v_TPC*f_NAADP*(Ca_md_C0*exp(-2*psi/p.RTF)-Ca_F_L0)*gg_Ca*p.NA/1000;
+J_TPC = p.OCaR*p.v_TPC*f_NAADP*(Ca_md_C0*exp(-2*psi/p.RTF)-Ca_F_L0)*gg_Ca*p.NA/1000;
 
 %Time Dependent Quantities
 
@@ -105,15 +105,15 @@ dNadt = dNNadt/(p.NA*p.init_V)*1e6;%uM
 dNCldt  = J_Cl_unc + (p.CLC_Cl*J_CLC);
 dCldt = dNCldt/(p.NA*p.init_V)*1e6;%uM
 
-dNCaTdt = J_Ca + (p.CAX_Ca*J_CAX) + J_Ca_trpml1;
+dNCaTdt = J_Ca + (p.CAX_Ca*J_CAX) + J_TPC;
 dCaTdt = dNCaTdt/(p.NA*p.init_V)*1e6;%uM
 
 dNCaFdt = dNCaTdt*p.r;
 dCaFdt = dNCaFdt/(p.NA*p.init_V)*1e6;%uM
 
-J_N = [J_K; J_Na; J_Cl_unc; J_CLC; J_Ca; J_CAX; J_Ca_trpml1];
+J_N = [J_K; J_Na; J_Cl_unc; J_CLC; J_Ca; J_CAX; J_TPC];
 J_uM = [J_N(1:6)/(p.NA*(p.V_cyt/1e6))*1e6; J_N(7)/(p.NA*(p.V_md/1e6))*1e6];   %Fluxes for cytoplasm
-J_uM(7);
+
 
 %OUTPUT
 dxdt = [dAeffdt; dHdt; dpHdt; dKdt; dNadt; dCldt; dCaTdt ; dCaFdt; J_uM];

@@ -4,89 +4,89 @@ function [dxdt, I, J] = odes(t, X, p)
   V = X(1);
   Ca_i = X(2);
   Ca_ss = X(3);
-  Ca_JSR = X(4);
-  Ca_NSR = X(5);
-  LTRPNCa = X(6);
-  HTRPNCa = X(7);
-  Na_i = X(8);
-  K_i = X(9);
-  a_to_f = X(10);
-  i_to_f = X(11);
-  a_ur = X(12);
-  i_ur = X(13);
-  a_Kss = X(14);
-  f_cav_PLM_p = X(15);
-  f_ecav_IKur = X(16);
-  a_urp = X(17);
-  i_urp = X(18);
-  f_ecav_IKto_f = X(19);
-  a_to_fp = X(20);
-  i_to_fp = X(21);
-  f_cyt_PLB_p = X(22);
-  f_cyt_Tnl_p = X(23);
-  R_cav_PKA = X(24);
-  R_cav_GRK2 = X(25);
-  Gs_cav_aGTP = X(26);
-  Gs_cav_By = X(27);
-  Gs_cav_aGDP = X(28);
-  R_ecav_PKA = X(29);
-  R_ecav_GRK2 = X(30);
-  Gs_ecav_aGTP = X(31);
-  Gs_ecav_By = X(32);
-  Gs_ecav_aGDP = X(33);
-  R_cyt_PKA = X(34);
-  R_cyt_GRK2 = X(35);
-  Gs_cyt_aGTP = X(36);
-  Gs_cyt_By = X(37);
-  Gs_cyt_aGDP = X(38);
-  cAMP_cav_AC56 = X(39);
-  cAMP_ecav_AC47 = X(40);
-  cAMP_cyt_AC56 = X(41);
-  cAMP_cyt_AC47 = X(42);
-  PDE3_cav_p = X(43);
-  PDE4_cav_p = X(44);
-  cAMP_cav_PDE2 = X(45);
-  cAMP_cav_PDE3 = X(46);
-  cAMP_cav_PDE4 = X(47);
-  PDE4_ecav_p = X(48);
-  cAMP_ecav_PDE2 = X(49);
-  cAMP_ecav_PDE4 = X(50);
-  PDE3_cyt_p = X(51);
-  PDE4_cyt_p = X(52);
-  cAMP_cyt_PDE2 = X(53);
-  cAMP_cyt_PDE3 = X(54);
-  cAMP_cyt_PDE4 = X(55);
-  cAMP_cav_PKA = X(56);
-  ARC_cav = X(57);
-  A2RC_cav = X(58);
-  A2R_cav = X(59);
-  C_cav = X(60);
-  PKIC_cav = X(61);
-  cAMP_ecav_PKA = X(62);
-  ARC_ecav = X(63);
-  A2RC_ecav = X(64);
-  A2R_ecav = X(65);
-  C_ecav = X(66);
-  PKIC_ecav = X(67);
-  cAMP_cyt_PKA = X(68);
-  ARC_cyt = X(69);
-  A2RC_cyt = X(70);
-  A2R_cyt = X(71);
-  C_cyt = X(72);
-  PKIC_cyt = X(73);
-  Inhib1_cyt_p_tot = X(74);
-  cAMP_cav = X(75);
-  cAMP_ecav = X(76);
-  cAMP_cyt = X(77);
-  P_RyR  = X(78);
-  S_LCC_cav = X(79:95);
-  S_LCC_ecav = X(96:112);
-  S_RyR = X(113:119);
-  S_Na = X(120:136);
-  S_IKr = X(137:140);
-  S_Lys = X(141:147);
-  Ca_md = X(148);
-  S_RyR_md = X(149:155);
+  Ca_md = X(4);
+  Ca_JSR = X(5);
+  Ca_NSR = X(6);
+  LTRPNCa = X(7);
+  HTRPNCa = X(8);
+  Na_i = X(9);
+  K_i = X(10);
+  a_to_f = X(11);
+  i_to_f = X(12);
+  a_ur = X(13);
+  i_ur = X(14);
+  a_Kss = X(15);
+  f_cav_PLM_p = X(16);
+  f_ecav_IKur = X(17);
+  a_urp = X(18);
+  i_urp = X(19);
+  f_ecav_IKto_f = X(20);
+  a_to_fp = X(21);
+  i_to_fp = X(22);
+  f_cyt_PLB_p = X(23);
+  f_cyt_Tnl_p = X(24);
+  R_cav_PKA = X(25);
+  R_cav_GRK2 = X(26);
+  Gs_cav_aGTP = X(27);
+  Gs_cav_By = X(28);
+  Gs_cav_aGDP = X(29);
+  R_ecav_PKA = X(30);
+  R_ecav_GRK2 = X(31);
+  Gs_ecav_aGTP = X(32);
+  Gs_ecav_By = X(33);
+  Gs_ecav_aGDP = X(34);
+  R_cyt_PKA = X(35);
+  R_cyt_GRK2 = X(36);
+  Gs_cyt_aGTP = X(37);
+  Gs_cyt_By = X(38);
+  Gs_cyt_aGDP = X(39);
+  cAMP_cav_AC56 = X(40);
+  cAMP_ecav_AC47 = X(41);
+  cAMP_cyt_AC56 = X(42);
+  cAMP_cyt_AC47 = X(43);
+  PDE3_cav_p = X(44);
+  PDE4_cav_p = X(45);
+  cAMP_cav_PDE2 = X(46);
+  cAMP_cav_PDE3 = X(47);
+  cAMP_cav_PDE4 = X(48);
+  PDE4_ecav_p = X(49);
+  cAMP_ecav_PDE2 = X(50);
+  cAMP_ecav_PDE4 = X(51);
+  PDE3_cyt_p = X(52);
+  PDE4_cyt_p = X(53);
+  cAMP_cyt_PDE2 = X(54);
+  cAMP_cyt_PDE3 = X(55);
+  cAMP_cyt_PDE4 = X(56);
+  cAMP_cav_PKA = X(57);
+  ARC_cav = X(58);
+  A2RC_cav = X(59);
+  A2R_cav = X(60);
+  C_cav = X(61);
+  PKIC_cav = X(62);
+  cAMP_ecav_PKA = X(63);
+  ARC_ecav = X(64);
+  A2RC_ecav = X(65);
+  A2R_ecav = X(66);
+  C_ecav = X(67);
+  PKIC_ecav = X(68);
+  cAMP_cyt_PKA = X(69);
+  ARC_cyt = X(70);
+  A2RC_cyt = X(71);
+  A2R_cyt = X(72);
+  C_cyt = X(73);
+  PKIC_cyt = X(74);
+  Inhib1_cyt_p_tot = X(75);
+  cAMP_cav = X(76);
+  cAMP_ecav = X(77);
+  cAMP_cyt = X(78);
+  P_RyR  = X(79);
+  S_LCC_cav = X(80:96);
+  S_LCC_ecav = X(97:113);
+  S_RyR = X(114:120);
+  S_RyR_md = X(121:127);
+  S_Na = X(128:144);
+  S_IKr = X(145:148);
+  S_Lys = X(149:155);
 
 %============================== Lysosome =======================================
   NAADP = odes.NAADP(t,p);
@@ -99,7 +99,7 @@ function [dxdt, I, J] = odes(t, X, p)
   cAMP = [cAMP_cav; cAMP_ecav; cAMP_cyt];
 
   %Beta1-Adrenoreceptor module
-  S_B_AR = X(24:38);
+  S_B_AR = X(25:39);
   dB_AR = rates.B_AR(S_B_AR, C, p);
 
   %Adenylyl Cyclase Module
@@ -111,7 +111,7 @@ function [dxdt, I, J] = odes(t, X, p)
   dPDE = rates.PDE(S_PDE, C, cAMP, p);
 
   %cAMP-Protein Kinase A Module
-  S_PKA = [X(57:61);X(63:67);X(69:73)];
+  S_PKA = [X(58:62);X(64:68);X(70:74)];
   dPKA = rates.PKA(S_PKA, C, cAMP, p);
 
   %Protein Phosphatase & Inhibitor-1 Module
@@ -201,8 +201,8 @@ function [dxdt, I, J] = odes(t, X, p)
   I_stim = odes.I_stim(t,p);
 
   %Concentration changes and buffers
-  Ca = [Ca_i; Ca_ss; Ca_JSR; Ca_NSR; Ca_md];
-  J = [J_rel; J_tr; J_xfer; J_leak; J_up; J_trpn; J_Lys; J_xfer_md; J_rel_md];
+  Ca = [Ca_i; Ca_ss; Ca_md; Ca_JSR; Ca_NSR];
+  J = [J_rel; J_rel_md; J_tr; J_xfer; J_xfer_md; J_leak; J_up; J_trpn; J_Lys];
   I = [I_cav_CaL; I_ecav_CaL; I_Na; I_Kr; I_Kur; I_Kto_f; I_K1; I_Kss; I_NaK; I_pCa; I_NaCa; I_Cab; I_Nab; I_ClCa; I_stim];
   dC = rates.Concentrations(Ca, J, I, p);
 
@@ -213,9 +213,9 @@ function [dxdt, I, J] = odes(t, X, p)
   %Pack output
   dxdt = [
   dV;
-  dC(1:4);
+  dC(1:5);
   dLTRPNCa; dHTRPNCa;
-  dC(5:6);
+  dC(6:7);
   dS_K(5:9);
   df_cav_PLM_p;
   dS_K(10:15);
@@ -230,11 +230,10 @@ function [dxdt, I, J] = odes(t, X, p)
   dS_LCC_cav;
   dS_LCC_ecav;
   dS_RyR;
+  dS_RyR_md;
   dS_Na;
   dS_IKr;
-  dLys(1:7);
-  dC(7);
-  dS_RyR_md
+  dLys(1:7)
   ];
 
 endfunction

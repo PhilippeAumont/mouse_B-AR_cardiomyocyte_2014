@@ -2,22 +2,22 @@ function dC = Concentrations(Ca, J, I, p)
   %Unpack state vector
   Ca_i = Ca(1);
   Ca_ss = Ca(2);
-  Ca_JSR = Ca(3);
-  Ca_md = Ca(4);
+  Ca_md = Ca(3);
+  Ca_JSR = Ca(4);
 
   J_rel = J(1);
-  J_tr = J(2);
-  J_xfer = J(3);
-  J_leak = J(4);
-  J_up = J(5);
-  J_trpn = J(6);
-  J_K = J(7);
-  J_Na = J(8);
-  J_Ca = J(11);
-  J_CAX = J(12);
-  J_Ca_trpml1 = J(13);
-  J_xfer_md = J(14);
-  J_rel_md = J(15);
+  J_rel_md = J(2);
+  J_tr = J(3);
+  J_xfer = J(4);
+  J_xfer_md = J(5);
+  J_leak = J(6);
+  J_up = J(7);
+  J_trpn = J(8);
+  J_K = J(9);
+  J_Na = J(10);
+  J_Ca = J(13);
+  J_CAX = J(14);
+  J_TPC = J(15);
 
   I_cav_CaL = I(1);
   I_ecav_CaL = I(2);
@@ -49,7 +49,7 @@ function dC = Concentrations(Ca, J, I, p)
           - I_ecav_CaL*p.A_cap*p.C_m/(2*p.V_ss*p.F));
   dCa_JSR = B_JSR*(J_tr - J_rel);
   dCa_NSR = (J_up - J_leak)*p.V_cyt/p.V_NSR - J_tr*p.V_JSR/p.V_NSR;
-  dCa_md = B_md*(J_rel_md*p.V_NSR/p.V_md - J_Ca_trpml1 - J_xfer_md*p.V_cyt/p.V_md);
+  dCa_md = B_md*(J_rel_md*p.V_NSR/p.V_md - J_TPC - J_xfer_md*p.V_cyt/p.V_md);
 
   %Sodium
   dNa_i = -(I_Na + I_Nab + 3*I_NaCa + 3*I_NaK)*p.A_cap*p.C_m/(p.V_cyt*p.F) - J_Na;
@@ -59,6 +59,6 @@ function dC = Concentrations(Ca, J, I, p)
             *p.A_cap*p.C_m/(p.V_cyt*p.F) - J_K;
 
   %Pack outputs
-  dC = [dCa_i; dCa_ss; dCa_JSR; dCa_NSR; dNa_i; dK_i; dCa_md];
+  dC = [dCa_i; dCa_ss; dCa_md; dCa_JSR; dCa_NSR; dNa_i; dK_i];
 
 endfunction

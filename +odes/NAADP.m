@@ -1,6 +1,6 @@
 function NAADP = NAADP(t, p)
-  if strcmp(p.NAADP_protocol, "none")
-    NAADP = 0;
+  if strcmp(p.NAADP_protocol, "cte")
+    NAADP = p.NAADP_C;
 
   elseif strcmp(p.NAADP_protocol, "sig")
     NAADP = p.NAADP_C/(1+exp(-p.NAADP_k1*(t-p.NAADP_t0)));
