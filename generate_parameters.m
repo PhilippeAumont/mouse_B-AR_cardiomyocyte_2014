@@ -12,14 +12,12 @@ p.V_ss = 1.485e-9;    %uL
 p.V_cav = 7.600e-07;  %uL (2% of cell volume)
 p.V_ecav = 1.520e-06; %uL (4% of cell volume)
 
-%Figure out below
-p.V_md = 1.0367e-12*N_Lys; %uL (cylinder with r=100nm and h=3.3nm) Is not that right now
+p.V_md = 1.0367e-13*N_Lys; %uL (cylinder with r=100nm and h=3.3nm)
 
 % %Extracellular Ion concentrations
 p.K_o = 5400;      %uM
 p.Na_o = 140000;   %uM
 p.Ca_o = 1800;     %uM
-
 
 % %SR Parameters
 p.v1 = 4.5;          %1/ms %From RyR Module Parameters
@@ -63,39 +61,39 @@ p.CAX_H = 3;
 p.CLC_Cl = 2;
 p.CLC_H = 1;
 p.CLC_type = 'WT';
-p.F_Lys = 96485;  %C/mol
-p.NA = 6.02e23; %u/mol
-p.P_Ca = 1.49e-10;  %cm/ms
-p.P_Cl = 1.2e-8;  %cm/ms
-p.P_H = 6e-8; %cm/ms
-p.P_K = 7.1e-10; %cm/ms
-p.P_Na = 9.6e-10; %cm/ms
+p.F_Lys = 96485;      %C/mol
+p.NA = 6.02e23;       %u/mol
+p.P_Ca = 1.49e-10;   %cm/ms
+p.P_Cl = 1.2e-8;      %cm/ms
+p.P_H = 6e-8;          %cm/ms
+p.P_K = 7.1e-10;      %cm/ms
+p.P_Na = 9.6e-10;     %cm/ms
 p.RTF = 25.690;
 p.beta_pH = 0.04;
 p.cap_0 = 1e-6;       %F/cm2
 p.pH_C = 7.2;
-p.psi_in = 0;   %mV
-p.psi_out = -50;    %mV
+p.psi_in = 0;          %mV
+p.psi_out = -50;       %mV
 p.q = 2.2;
 p.r = 0.1;
-p.tau_act = 1000;   %ms
+p.tau_act = 1000;     %ms
 p.tau_deact = 250;    %ms
-p.Cl_C = 0.01;    %M
+p.Cl_C = 0.01;        %M
 p.B = 0.0809542751;
 
 p.init_V = 1.64636595e-16*N_Lys;    %L
-p.S = 1.45267584e-8*N_Lys;    %cm2
+p.S = 1.45267584e-8*N_Lys;          %cm2
 p.N_CAX = 300*N_Lys;
-p.N_CLC = 100*N_Lys;
+p.N_CLC = 0*N_Lys;
 p.N_VATP = 300*N_Lys;
 
-p.n_TPC = 1;
-p.v_TPC = 1e-11; %uM/ms
-p.Ka_TPC = 0.03; %uM, so about 30 nM
+p.n_TPC = 1;           %Hill Coefficient
+p.v_TPC = 1e-13;      %uM/ms
+p.Ka_TPC = 0.03;      %uM, so about 30 nM
 
 
 load('v_flux.mat');
-p.v_flux = v_flux/1000; %proton/ms
+p.v_flux = v_flux; %proton/s
 
 save('parameters.mat', "p");
 endfunction

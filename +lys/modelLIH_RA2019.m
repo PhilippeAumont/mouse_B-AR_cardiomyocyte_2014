@@ -50,8 +50,8 @@ end
 
 %V-ATPase performance
 V_ATPASE    = lys.find_VATP_rate(p.v_flux,psi,pH);
-J_VATPASE   = p.N_VATP*real(V_ATPASE);
-
+J_VATPASE   = p.N_VATP*real(V_ATPASE)/1000;
+%{
 %ClC-7 Antiporter {H out, Cl in}
 CLC_mu      = (p.CLC_H + p.CLC_Cl)*psi + p.RTF*(p.CLC_H*2.3*delta_pH + p.CLC_Cl*log(Cl_C0/Cl_L0));
 %Switching function
@@ -73,6 +73,9 @@ elseif strcmp(p.CLC_type,'WT')
     J_CLC    = p.N_CLC*Aeff*CLC_mu/1000;
 
 end
+%}
+dAeffdt   = 0;
+J_CLC    = 0;
 
 %CAX Antiporter {H out, Ca in}
 CAX_mu   = (p.CAX_H - 2*p.CAX_Ca)*psi + p.RTF*(p.CAX_H*2.3*delta_pH + p.CAX_Ca/2*log(Ca_F_L0/Ca_F_C0));
@@ -111,8 +114,8 @@ dCaTdt = dNCaTdt/(p.NA*p.init_V)*1e6;%uM
 dNCaFdt = dNCaTdt*p.r;
 dCaFdt = dNCaFdt/(p.NA*p.init_V)*1e6;%uM
 
-J_N = [J_K; J_Na; J_Cl_unc; J_CLC; J_Ca; J_CAX; J_TPC];
-J_uM = [J_N(1:6)/(p.NA*(p.V_cyt/1e6))*1e6; J_N(7)/(p.NA*(p.V_md/1e6))*1e6];   %Fluxes for cytoplasm
+J_N = [J_K; J_Na; J_Cl_unc; J_CLC; J_Ca; J_CAX; J_TPC; J_VATPASE];
+J_uM = [J_N(1:6)/(p.NA*(p.V_cyt/1e6))*1e6; J_N(7)/(p.NA*(p.V_md/1e6))*1e6;J_N(8)/(p.NA*(p.V_cyt/1e6))*1e6];   %Fluxes for cytoplasm
 
 
 %OUTPUT

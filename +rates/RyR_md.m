@@ -17,11 +17,11 @@ function dS_RyR = RyR_md(S, Ca_md, C_cyt, PP1_cyt_f, p)
   n = 4;
   m = 3;
   k_on_a = 6.075e-3;       %1/uM^4 ms
-  k_off_a = 0.07125*3;        %1/s
+  k_off_a = 0.07125*5;        %1/s
   k_on_b = 4.05e-3;        %1/uM^3 ms
   k_off_b = 0.9650;         %1/ms
   k_on_c = 9.0e-3;         %1/ms
-  k_off_c = 8e-4*3;            %1/ms
+  k_off_c = 8e-4*5;            %1/ms
   k_on_ap = 5*k_on_a;        %1/uM^4 ms
   k_off_ap = 3*k_off_a;        %1/ms
   k_on_bp = 5*k_on_b;        %1/uM^3 ms
@@ -40,7 +40,7 @@ function dS_RyR = RyR_md(S, Ca_md, C_cyt, PP1_cyt_f, p)
   PP_cyt = PP1_cyt_f + PP2_cyt;
 
   %Calculations
-  RyR_md = 0.1*RyR_tot;
+  RyR_md = 0.01*RyR_tot*p.V_cell/p.V_md;
 
   %Functions for phosphorylation and dephosphorylation
   function x = P(S);

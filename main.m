@@ -13,7 +13,7 @@ B1-Adrenergic Signaling System in Mouse Ventricular Myocytes. PLoS
 ONE 9(2): e89113. https://doi.org/10.1371/journal.pone.0089113
 
 Units
-- Time: ms (Published model is in s. It was converted to ms)
+- Time: ms (The published model is in s. It was converted to ms)
 - Concentration: uM
 - Volume: uL
 - Voltage: mV
@@ -26,7 +26,7 @@ Units
 load("parameters.mat");
 
 %  %Load Starting Conditions
-X0 = load("X0_OG.mat").ans(:);
+X0 = load("X0_600s_1uMISO.mat").ans(:);
 
 %This functions is used to live track progress.
 function status = progressBar(t, y, flag, tf)
@@ -61,11 +61,12 @@ end
 %Then fill out the setting below, and run this main file to run the simulation.
 
 %Stimulation protocols:
-p.protocol = "none";
+p.protocol = "spike";
 p.NAADP_protocol = "cte";
-p.OCaR = 0.00;   %TPC control by OCaR. Scalar controlling J_TPC.
-p.L = 0;      %B_AR ligand (ISO) concentration [uM]
-p.IBMX = 0;   %PDE inhibitor concentration [uM]
+p.NAADP_C = 0;    %[uM]
+p.OCaR = 0;   %TPC control by OCaR. Scalar controlling J_TPC.
+p.L = 1;          %B_AR ligand (ISO) concentration [uM]
+p.IBMX = 0;       %PDE inhibitor concentration [uM]
 
 %{
 Patch-clamp protocols:
@@ -78,27 +79,29 @@ NAADP protocols:
 - cte: Constant concentration (can be 0)
 - sig: sigmoidal increase
 - spike: NAADP spike
+
 Warning: Very short smoothed spikes may not reach full amplitude
 Warning: protocol misspell leads to "value on the right hand side of assignment is undefined".
 %}
+
+%Patch-clamp settings
 p.stim_start = 1000;%[ms]
-p.stim_2nd_start = 10000; %for two_spikes_smooth [ms]
-p.stim_period = 100; %For train_smooth [ms]
 p.stim_dur = 1;%[ms]
 p.stim_amp = -80;%[mV]
 p.stim_k = 100000;    %Sharpness of the stimulation current curve
-
-p.NAADP_C = 0;%[uM]
-
+p.stim_2nd_start = 10000; %for two_spikes_smooth [ms]
+p.stim_period = 100; %For train_smooth [ms]
+S.
+%NAADP settings
 p.NAADP_k1 = 0.01;%Used for sig - if == 1, whole switch happens within 20 ms. If 10, about 1 ms
 p.NAADP_t0 = 1000;%[ms], midpoint of the curve
 p.NAADP_k2 = 100; %Used for spike
 p.NAADP_stim_start = 1000; %[ms]
 p.NAADP_stim_dur = 10;%[ms]
 
-p.extra_var = false(); %whether to calculate currents and fluxes, can be time consuming
-
-tspan = [0,5000];
+%Simulation settings
+p.extra_var = true(); %whether to calculate currents and fluxes, can be time consuming
+tspan = [0,2000];
 pt_interval = 0.1;%[ms]
 
 %===============================================================================
@@ -116,7 +119,7 @@ X_interp = interp1(t,X,tquery,'spline');  %'spline' assumes continuity, 'pchip' 
 
 %Calculate and save the Currents and Fluxes at each timepoint
 if (p.extra_var == true())
-  I = zeros(size(tquery)(1), 15); J = zeros(size(tquery)(1), 15);
+  I = zeros(size(tquery)(1), 15); J = zeros(size(tquery)(1), 16);
   for k = 1:length(tquery)
     [~, I_k, J_k] = odes.odes(tquery(k), X_interp(k,:).', p);
     I(k,:) = I_k(:).';

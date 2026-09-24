@@ -92,7 +92,7 @@ function [dxdt, I, J] = odes(t, X, p)
   NAADP = odes.NAADP(t,p);
   S_Lys = [S_Lys; Ca_i; Na_i; K_i; Ca_md; NAADP];
   dLys = lys.modelLIH_RA2019(S_Lys,p);
-  J_Lys = dLys(9:15);
+  J_Lys = dLys(9:16);
 
 %============================== Signalling =====================================
   C = [C_cav; C_ecav; C_cyt];
@@ -186,7 +186,7 @@ function [dxdt, I, J] = odes(t, X, p)
 %================================ Compiling ====================================
   %Fluxes
   J_rel = p.v1*(S_RyR(1)+S_RyR(2)+S_RyR(4)+S_RyR(5))*(Ca_JSR-Ca_ss*P_RyR);
-  J_rel_md = 0.01*p.v1*(S_RyR_md(1)+S_RyR_md(2)+S_RyR_md(4)+S_RyR_md(5))*(Ca_NSR-Ca_md);
+  J_rel_md = 0.001*p.v1*(S_RyR_md(1)+S_RyR_md(2)+S_RyR_md(4)+S_RyR_md(5))*(Ca_NSR-Ca_md); %Scalar is somewhat random
   J_tr = (Ca_NSR - Ca_JSR)/p.t_tr;
   J_xfer = (Ca_ss - Ca_i)/p.t_xfer;
   J_xfer_md = (Ca_md - Ca_i)/p.t_xfer;
