@@ -1,8 +1,6 @@
 function set_starting_conditions()
-
   %Set up lysosome model
   init_Aeff = 0.30;
-  init_Ca_F = 0.1*6e-3*1e6; %uM
   init_Ca_T = 6e-3*1e6; %uM
   init_Cl = 0.001*1e6; %uM
   init_H = 0; %uM, proton differential from start

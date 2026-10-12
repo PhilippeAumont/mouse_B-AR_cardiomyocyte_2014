@@ -8,7 +8,7 @@ K      = X(4)/1e6;
 Na     = X(5)/1e6;
 Cl     = X(6)/1e6;
 Ca_T   = X(7)/1e6;
-%Ca_F   = X(8)/1e6;
+
 Ca_F = p.r*Ca_T;
 
 Ca_C   = X(8)/1e6;
@@ -51,29 +51,8 @@ end
 %V-ATPase performance
 V_ATPASE    = lys.find_VATP_rate(p.v_flux,psi,pH);
 J_VATPASE   = p.N_VATP*real(V_ATPASE)/1000;
-%{
-%ClC-7 Antiporter {H out, Cl in}
-CLC_mu      = (p.CLC_H + p.CLC_Cl)*psi + p.RTF*(p.CLC_H*2.3*delta_pH + p.CLC_Cl*log(Cl_C0/Cl_L0));
-%Switching function
-x           = 0.5 + 0.5*tanh((CLC_mu + 250)/75);
-%Activity
-A           = 0.3*x + 1.5E-5*(1-x)*CLC_mu^2;
 
-if strcmp(p.CLC_type,'fast')
-    J_CLC    = p.N_CLC*A*CLC_mu;
-    dAeffdt     = 0;
-elseif strcmp(p.CLC_type,'WT')
-    if A < Aeff
-        tau = p.tau_deact;
-    else
-        tau = p.tau_act;
-    end
-
-    dAeffdt   = (1/tau)*(A - Aeff);
-    J_CLC    = p.N_CLC*Aeff*CLC_mu/1000;
-
-end
-%}
+%CLC removed
 dAeffdt   = 0;
 J_CLC    = 0;
 
@@ -88,12 +67,11 @@ J_Na   = p.P_Na*p.S*(Na_C0*exp(-psi/p.RTF)-Na_L0)*gg*p.NA/1000;
 J_Cl_unc   = p.P_Cl*p.S*(Cl_C0-Cl_L0*exp(-psi/p.RTF))*gg*p.NA/1000;
 J_Ca   = p.P_Ca*p.S*(Ca_F_C0*exp(-2*psi/p.RTF)-Ca_F_L0)*gg_Ca*p.NA/1000;
 
-%TPC Channel
+%TPC Channel - Generic model, not based on experimental data
 f_NAADP = (NAADP^p.n_TPC/(p.Ka_TPC^p.n_TPC + NAADP^p.n_TPC));
 J_TPC = p.OCaR*p.v_TPC*f_NAADP*(Ca_md_C0*exp(-2*psi/p.RTF)-Ca_F_L0)*gg_Ca*p.NA/1000;
 
 %Time Dependent Quantities
-
 dNHdt   = J_H + (J_VATPASE) - (p.CLC_H*J_CLC) - (p.CAX_H*J_CAX);
 dHdt  = dNHdt/(p.NA*p.init_V)*1e6; %uM
 

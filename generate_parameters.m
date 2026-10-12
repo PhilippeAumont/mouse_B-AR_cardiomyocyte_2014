@@ -1,7 +1,7 @@
 function generate_parameters()
 %This file creates the file containing all parameters.
 
-N_Lys = 300;
+N_Lys = 300;            %Number of lysosomes per cell
 
 p.A_cap = 1.534e-4;   %cm2
 p.V_cell = 38.00e-6;  %uL
@@ -58,9 +58,6 @@ p.E_Cl = -40;           %mV
 %%Lys parameters
 p.CAX_Ca = 1;
 p.CAX_H = 3;
-p.CLC_Cl = 2;
-p.CLC_H = 1;
-p.CLC_type = 'WT';
 p.F_Lys = 96485;      %C/mol
 p.NA = 6.02e23;       %u/mol
 p.P_Ca = 1.49e-10;   %cm/ms
@@ -83,15 +80,15 @@ p.B = 0.0809542751;
 
 p.init_V = 1.64636595e-16*N_Lys;    %L
 p.S = 1.45267584e-8*N_Lys;          %cm2
-p.N_CAX = 300*N_Lys;
-p.N_CLC = 0*N_Lys;
-p.N_VATP = 300*N_Lys;
+p.N_CAX = 300*N_Lys;                   %number of CAX per lysosome
+p.N_VATP = 300*N_Lys;                  %number of V-ATPase per lysosome
 
+%Made up values. Can be modified
 p.n_TPC = 1;           %Hill Coefficient
-p.v_TPC = 1e-13;      %uM/ms
+p.v_TPC = 1e-12;      %uM/ms
 p.Ka_TPC = 0.03;      %uM, so about 30 nM
 
-
+%V-ATPase velocity
 load('v_flux.mat');
 p.v_flux = v_flux; %proton/s
 

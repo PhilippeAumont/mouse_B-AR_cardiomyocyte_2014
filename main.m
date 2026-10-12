@@ -4,16 +4,13 @@ clear;
 This is the main file of a mouse cardiomyocyte model.
 It should be in a directory with other directories such as +odes, +plotting and
 +rates. This allows it to call scripts/function from those files
-Refer to the original paper for details on parameters. I tried to stay as consistent
+Refer to the original papers for details on parameters. I tried to stay as consistent
 with the notation as possible, expect when it was too verbose.
 The end of this file contains the settings to run simulations and instructions.
 Philippe Aumont
-Bondarenko VE (2014) A Compartmentalized Mathematical Model of the
-B1-Adrenergic Signaling System in Mouse Ventricular Myocytes. PLoS
-ONE 9(2): e89113. https://doi.org/10.1371/journal.pone.0089113
 
 Units
-- Time: ms (The published model is in s. It was converted to ms)
+- Time: ms (The models is in s. They were converted to ms)
 - Concentration: uM
 - Volume: uL
 - Voltage: mV
@@ -26,7 +23,7 @@ Units
 load("parameters.mat");
 
 %  %Load Starting Conditions
-X0 = load("X0_600s_1uMISO.mat").ans(:);
+X0 = load("X0_OG.mat").ans(:);
 
 %This functions is used to live track progress.
 function status = progressBar(t, y, flag, tf)
@@ -58,14 +55,14 @@ end
 
 %=================================== Set up ====================================
 %First run generate_parameters() in the terminal to create the parameters file.
-%Then fill out the setting below, and run this main file to run the simulation.
+%Then fill out the setting below, and run this main file to start the simulation.
 
 %Stimulation protocols:
-p.protocol = "spike";
+p.protocol = "none";
 p.NAADP_protocol = "cte";
-p.NAADP_C = 0;    %[uM]
-p.OCaR = 0;   %TPC control by OCaR. Scalar controlling J_TPC.
-p.L = 1;          %B_AR ligand (ISO) concentration [uM]
+p.NAADP_C = 0;    %[uM], K_a is 0.03
+p.OCaR = 0;       %TPC control by OCaR. Scalar controlling J_TPC.
+p.L = 0;          %B_AR ligand (ISO) concentration [uM]
 p.IBMX = 0;       %PDE inhibitor concentration [uM]
 
 %{
@@ -80,33 +77,41 @@ NAADP protocols:
 - sig: sigmoidal increase
 - spike: NAADP spike
 
-Warning: Very short smoothed spikes may not reach full amplitude
-Warning: protocol misspell leads to "value on the right hand side of assignment is undefined".
+Warning: Very short, smoothed spikes may not reach full amplitude
+Warning: protocol name typos leads to "value on the right hand side of assignment is undefined".
 %}
 
 %Patch-clamp settings
-p.stim_start = 1000;%[ms]
+p.stim_start = 4000;%[ms]
 p.stim_dur = 1;%[ms]
 p.stim_amp = -80;%[mV]
-p.stim_k = 100000;    %Sharpness of the stimulation current curve
-p.stim_2nd_start = 10000; %for two_spikes_smooth [ms]
-p.stim_period = 100; %For train_smooth [ms]
-S.
+p.stim_k = 100000;     %Sharpness of the stimulation current curve
+p.stim_2nd_start = 110; %for two_spikes_smooth [ms]
+p.stim_period = 200;    %For train_smooth [ms]
+
 %NAADP settings
-p.NAADP_k1 = 0.01;%Used for sig - if == 1, whole switch happens within 20 ms. If 10, about 1 ms
-p.NAADP_t0 = 1000;%[ms], midpoint of the curve
-p.NAADP_k2 = 100; %Used for spike
+p.NAADP_k1 = 0.01;%Used for sig
+%{
+k        Time from ~1% to ~99%
+0.01 - ~ 8000-9000 ms
+0.01 - ~800-900 ms
+0.1 - ~100 ms
+1 - 10-12 ms
+5 - 2 ms
+10 - 1 ms
+%}
+p.NAADP_t0 = 1000;%[ms], midpoint of the curve for sig
+p.NAADP_k2 = 100; %Sharpness, Used for spike
 p.NAADP_stim_start = 1000; %[ms]
 p.NAADP_stim_dur = 10;%[ms]
 
 %Simulation settings
-p.extra_var = true(); %whether to calculate currents and fluxes, can be time consuming
-tspan = [0,2000];
-pt_interval = 0.1;%[ms]
+p.extra_var = false(); %whether to calculate+record currents and fluxes, can be time consuming
+tspan = [0,6000];
+pt_interval = 0.1;%[ms], time step at which to interpolate state variables
 
 %===============================================================================
-%Solver
-%Might have to adjust tolerances for the lysosome model
+%Solver (You likely should not touch this part)
 abstol_vect = 1e-9*ones(1,155); abstol_vect(79) = 1e-12; abstol_vect(149:155) = 1e-6;
 options = odeset('RelTol', 1e-6, 'AbsTol', abstol_vect,"NonNegative", [2:155], 'MaxStep', 1);
 options = odeset(options, 'OutputFcn', @(t,y,flag) progressBar(t,y,flag,tspan(2)));
